@@ -1,0 +1,19 @@
+{
+  "name": "service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "service": "./node_modules/.bin/nodemon ./config/run"
+  },
+  "author": "mavio",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.5.0",
+    "koa-router": "^7.4.0",
+    "moment": "^2.20.1",
+    "mongoose": "^5.0.6",
+    "nodemon": "^1.15.0",
+    "runkoa": "^1.5.9"
+  }
+}

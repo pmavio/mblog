@@ -1,0 +1,121 @@
+{
+  "environment": "sichuang",
+
+  "ip": {
+    "auto": true,
+    "client": "192.168.20.199",
+    "api": "192.168.20.199",
+    "service": "192.168.20.199"
+  },
+  
+  "port": {
+    "api": 5001,
+    "service": 5000
+  },
+  
+  "dns": {
+    "default": "http://meeting.ctron.com.cn/",
+    "forceUseDefault": false,
+    "api": "http://meeting.ctron.com.cn/",
+    "service": "http://meeting.ctron.com.cn/"
+  },
+  
+  "mongodb": {
+    "auto": false,
+    "ip": "127.0.0.1",
+    "port": "27017",
+    "defaultDBName": "MEETINGDB",
+    "forceUseDefault": false
+  },
+
+  "thirdParts": {
+    "sichuang": {
+
+      "cheatAll": false,
+      "cheatWithSuccess": true,
+
+      "huapingMeeting": {
+        "cheat": false,
+        "cheatWithSuccess": true,
+        "base_url": "http://localhost:8000/",
+        "wsdl_url": "http://localhost:8000/?wsdl"
+      },
+
+      "huaxunMeeting": {
+        "cheat": false,
+        "cheatWithSuccess": true,
+        "base_url": "http://192.168.65.66:8080/vms-web/"
+      },
+
+      "ldap": {
+        "cheat": false,
+        "cheatWithSuccess": true,
+        "base_url": "ldap://192.168.65.66:389",
+        "username": "ou=orgusers,dc=gtja,dc=net",
+        "password": "secret",
+        "filters": {
+          "all": "(objectclass=*)",
+          "org": "(objectclass=*)",
+          "user": "(objectclass=*)"
+        },
+        "scope": "sub",
+        "timeLimit": 500000,
+        "connectTimeout": 500000
+      }
+    },
+    "gtjatest": {
+
+      "cheatAll": false,
+      "cheatWithSuccess": true,
+
+      "huapingMeeting": {
+        "cheat": false,
+        "cheatWithSuccess": true,
+        "base_url": "http://localhost:8000/",
+        "wsdl_url": "http://localhost:8000/?wsdl"
+      },
+
+      "huaxunMeeting": {
+        "cheat": false,
+        "cheatWithSuccess": true,
+        "base_url": "http://192.168.65.66:8080/vms-web/"
+      },
+
+      "ldap": {
+        "cheat": false,
+        "cheatWithSuccess": true,
+        "base_url": "ldap://10.189.96.27:389",
+        "username": "cn=ldapadmin,cn=ibmpolicies",
+        "password": "password",
+        "filters": {
+          "all": "(|(&(objectclass=GtjaOrganization)(disabled=0))(&(objectclass=GtjaPerson)(source=ehr)))",
+          "org": "(&(objectclass=GtjaOrganization)(disabled=0))",
+          "user": "(&(objectclass=GtjaPerson)(source=ehr))"
+        },
+        "scope": "sub",
+        "timeLimit": 500000,
+        "connectTimeout": 500000
+      }
+    }
+
+  },
+  
+  "sso": {
+    "sichuang": {
+      "ssoUrl": "/sso/mock?sso=",
+      "returnurl": "/#/",
+      "appcode": "bmcp",
+      "appId": "YQiv/9qmYLM=",
+      "key": "9/OyTjGr6Qs4QfgcqI39Z79ddHPUEODf",
+      "iv": "1W8+mPbtaTI="
+    },
+    "gtjatest": {
+      "ssoUrl": "http://ssotest.gtja.net:8099/ssoserver/SSO.aspx?sso=",
+      "returnurl": "/#/",
+      "appcode": "bmcp",
+      "appId": "YQiv/9qmYLM=",
+      "key": "9/OyTjGr6Qs4QfgcqI39Z79ddHPUEODf",
+      "iv": "1W8+mPbtaTI="
+    }
+  }
+}
