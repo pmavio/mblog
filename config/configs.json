@@ -9,8 +9,8 @@
   },
   
   "port": {
-    "api": 5001,
-    "service": 5000
+    "api": 80,
+    "service": 3000
   },
   
   "dns": {

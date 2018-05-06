@@ -4,18 +4,18 @@ import Response from "./rest/Response";
 import dbModels from './db/dbModels';
 
 // 初始化module对应的db连接配置 TODO
-DB.registerModule('meeting', {
-    dbUrl: 'mongodb://127.0.0.1:27017/MEETINGDB2',
-});
-DB.registerModule('system', {
-    dbUrl: 'mongodb://127.0.0.1:27017/MEETINGDB2',
+DB.registerModule('mblog', {
+    dbUrl: 'mongodb://127.0.0.1:27017/mblog',
 });
 DB.registerModule('default', {
-    dbUrl: 'mongodb://127.0.0.1:27017/MEETINGDB2',
+    dbUrl: 'mongodb://127.0.0.1:27017/default',
+});
+DB.registerModule('public', {
+    dbUrl: 'mongodb://127.0.0.1:27017/system',
 });
 
 // 捕获未处理的Promise异常，并记录log
-const logModel = dbModels.from('system', 'log');
+const logModel = dbModels.from('default', 'log');
 process.on('unhandledRejection', function (err, p) {
     logModel.logUnhandledRejection(err);
     console.error('unhandledRejection :', err); //TODO
@@ -47,14 +47,14 @@ service.use(async (ctx, next) => {
 });
 
 //注册module的路由
-const systemRouters = require('./rest/system');
-const meetingRouters = require('./rest/meeting');
+const systemRouters = require('./rest/public');
+const mblogRouters = require('./rest/mblog');
 
 const routers = [
     systemRouters,
-    meetingRouters,
+    mblogRouters,
 ];
-routers.forEach(router => {
+for(let router of routers){
     service.use(router.routes(), router.allowedMethods());
-});
+}
 export default service;

@@ -3,7 +3,7 @@ import koaRouter from 'koa-router';
 //ModelTypes
 import menu from './Menu';
 
-const moduleName = 'meeting';
+const moduleName = 'mblog';
 const router = koaRouter();
 const routerTypes = [
     menu,

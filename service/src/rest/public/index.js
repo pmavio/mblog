@@ -3,7 +3,7 @@ import koaRouter from 'koa-router';
 //ModelTypes
 import log from './Log';
 
-const moduleName = 'system';
+const moduleName = 'public';
 const router = koaRouter();
 const routerTypes = [
     log,
