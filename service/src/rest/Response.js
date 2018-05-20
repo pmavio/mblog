@@ -3,20 +3,24 @@
  */
 export default class Response{
 
-    static format(response){
-        if(response === undefined || response === null) {
-            return new Response().failure('Reponse.format 接受了一个空对象', response);
-        }else if(response instanceof Response){
-            return response;
-        }else if(response.code !== undefined){
+    static format(response) {
+        if (response === undefined || response === null) {
+            return new Response();
+        }
+        //     return new Response().failure('Reponse.format 接受了一个空对象', response);
+        // }else
+        if(response instanceof Error){
+            return new Response().failure(response.stack);
+        }
+        if (response.code !== undefined) {
             return new Response(response.result, response.code, response.message, response.source);
-        }else{
+        } else {
             return new Response(response);
         }
     }
 
-    static async fromPromise(promise){
-        if(!promise || !promise instanceof Promise){
+    static async fromPromise(promise) {
+        if (!promise || !promise instanceof Promise) {
             throw '传入参数不是一个Promise'
         }
         return await promise
@@ -25,9 +29,20 @@ export default class Response{
             })
             .catch(err => {
                 let message = '';
-                if(err && err.message) message = err.message;
+                if (err && err.message) message = err.message;
+                if(err instanceof Error) message += err.stack
                 return Response.format(err).failure(message);
             })
+    }
+
+    static isSuccess(response) {
+        if (response &&
+            // response instanceof Response &&
+            response.code === 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     constructor(result = '', code = null, message = null, source = null){
@@ -42,7 +57,7 @@ export default class Response{
 
     success(result){
         this.code = 0;
-        if(result || result === false){
+        if (result !== undefined) {
             this.result = result;
         }
         return this;

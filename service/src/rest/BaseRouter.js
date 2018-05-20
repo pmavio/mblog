@@ -72,7 +72,7 @@ export default class BaseRouter extends koaRouter {
         //列表
         if(switchers.getList)
         this.get('/', async ctx => {
-            const query = this.getQuery(ctx);
+            const query = await this.getRequestParams(ctx);
             const currentPage = parseInt(query.currentPage);
             const pageSize = parseInt(query.pageSize);
             const skipNum = pageSize * (currentPage - 1);
@@ -98,8 +98,12 @@ export default class BaseRouter extends koaRouter {
 
         //id查找
         if(switchers.findById)
-        this.get('/:id', async ctx => {
-            const _id = ctx.params.id;
+        this.get('/:_id', async ctx => {
+            const {_id} = await this.getRequestParams(ctx);
+            if(!_id){
+                ctx.body = new Response().failure('_id不能为空');
+                return;
+            }
             // console.log(this.getTableName() + ' getById ' + _id);
             ctx.body = await Response.fromPromise(dbModel.getById(_id).exec());
         });
@@ -114,29 +118,29 @@ export default class BaseRouter extends koaRouter {
         //id更新
         if(switchers.update)
         this.put('/', async ctx => {
-            const data = await this.parsePostData(ctx);
+            const data = await this.getRequestParams(ctx);
             //自动填入更新时间
-            if (data && !data.updatetime) {
-                data.updatetime = Date.now();
+            if (data && !data.updateTime) {
+                data.updatTime = Date.now();
             }
             ctx.body = await Response.fromPromise(dbModel.updateOne(data).exec());
         });
 
-        //条件删除,逻辑删除，仅把enable字段设为false
+        //条件删除,逻辑删除，仅把disabled字段设为true
         if(switchers.remove)
         this.delete('/', async ctx => {
             const query = ctx.query;
             const conditions = this.getDefaultConditions(query);
-            ctx.body = await Response.fromPromise(dbModel.update(conditions, { enable: false }).exec());
+            ctx.body = await Response.fromPromise(dbModel.update(conditions, { disabled: true }).exec());
         });
 
-        //id删除,逻辑删除，仅把enable字段设为false
+        //id删除,逻辑删除，仅把disabled字段设为true
         if(switchers.removeById)
-        this.delete('/:id', async ctx => {
-            const _id = ctx.params.id;
+        this.delete('/:_id', async ctx => {
+            const {_id} = await this.getRequestParams(ctx);
             const updateData = {
-                enable: false,
-                updatetime: Date.now(),
+                disabled: true,
+                updateTime: Date.now(),
             };
             ctx.body = await Response.fromPromise(dbModel.update({ _id }, updateData).exec());
         });
@@ -144,35 +148,19 @@ export default class BaseRouter extends koaRouter {
         //条件删除，物理删除，慎用
         if(switchers.kill)
         this.delete('/kill', async ctx => {
-            const query = ctx.query;
+            const {query} = await this.getRequestParams(ctx);
             const conditions = this.getDefaultConditions(query);
             ctx.body = await Response.fromPromise(dbModel.remove(conditions).exec());
         });
 
     }
 
-    /**
-     * 转换带有美元符$的字符串为对象
-     * @param ctx
-     */
-    getQuery(ctx){
-        let query = ctx.query;
-        if(query){
-            //TODO 待优化
-            const keys = Object.keys(query);
-            keys.forEach(key => {
-                let value = query[key];
-                if(typeof value === 'string'){
-                    if(value.startsWith('{') && value.endsWith('}')){
-                        value = JSON.parse(value);
-                    }else if(value.startsWith('[') && value.endsWith(']')){
-                        value = JSON.parse(value);
-                    }
-                    query[key] = value;
-                }
-            });
+    async getRequestParams(ctx){
+        if(ctx.method === 'GET' || ctx.method === 'DELETE'){
+            return Object.assign({}, ctx.params, ctx.query);
+        }else if(ctx.method === 'POST' || ctx.method === 'PUT'){
+            return await this.parsePostData(ctx);
         }
-        return query;
     }
 
     async parsePostData(ctx){
@@ -186,8 +174,8 @@ export default class BaseRouter extends koaRouter {
      */
     getDefaultConditions(query) {
         let c = {
-            enable: {
-                $ne: false, //默认筛选掉enable=false的数据
+            disabled: {
+                $ne: true, //默认筛选掉disabled=true的数据
             },
         };
         if (query) {

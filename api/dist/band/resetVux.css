@@ -1,0 +1,214 @@
+html {
+    font-size: 37.5px;
+}
+
+@media screen and (min-width:320px) {
+    html {
+        font-size: 32px;
+    }
+}
+
+@media screen and (min-width:360px) {
+    html {
+        font-size: 36px;
+    }
+}
+
+@media screen and (min-width:375px) {
+    html {
+        font-size: 37.5px;
+    }
+}
+
+@media screen and (min-width:414px) {
+    html {
+        font-size: 41.4px;
+    }
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font: 0.4rem/1.5 "PingFangSC-Regular", "San Francisco", Arial;
+    background: rgba(242, 246, 253, 1);
+    color: #333333;
+}
+
+
+/* 头部样式 */
+
+.header.vux-header {
+    font-size: 0.48rem;
+    box-sizing: border-box;
+    padding: 5px 0;
+    -webkit-box-sizing: border-box;
+}
+
+.vux-header .vux-header-left .vux-header-back {
+    font-weight: lighter;
+}
+
+.vux-header .vux-header-left .left-arrow:before {
+    border-width: 3px 0 0 3px !important;
+    border-color: #fff !important;
+}
+
+.vux-header .vux-header-left a {
+    color: #fff !important;
+}
+
+
+/* 底部样式 */
+
+.footer .weui-tabbar__item {
+    padding-bottom: 3px;
+}
+
+.footer .weui-tabbar__icon {
+    width: 23px;
+    height: 23px;
+}
+
+.footer .weui-tabbar__label {
+    color: rgba(199, 199, 209, 1);
+    font-size: 12px;
+    height: 18px;
+    line-height: 18px;
+}
+
+.footer .weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon,
+.footer .weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon>i,
+.footer .weui-tabbar__item.weui-bar__item_on .weui-tabbar__label {
+    color: #0070FF;
+}
+
+
+/* 按钮样式 */
+
+.btnLarge.weui-btn {
+    width: 8.8rem;
+    font-size: 0.48rem;
+    height: 1.333rem;
+    line-height: 1.333rem
+}
+
+.btnLarge.weui-btn:after {
+    border: none;
+}
+
+.btnMini.weui-btn {
+    width: 2.667rem;
+    font-size: 0.42rem;
+}
+
+.btnMini.weui-btn:after {
+    border: none;
+}
+
+.btnDef {
+    border-radius: 1.333rem!important;
+    border-color: #FFCC33!important;
+    background-color: #FFCC33!important;
+    color: #fff!important;
+}
+
+.btnDef:active {
+    background-color: #FEC313!important;
+}
+
+.btnDis {
+    border-radius: 1.333rem!important;
+    border-color: #FFE186!important;
+    background-color: #FFE186!important;
+    color: #fff!important;
+}
+
+
+/* 输入框样式 */
+
+.ms_input {
+    width: 9.4rem;
+    margin: 0 auto;
+    margin-bottom: 12px;
+    background: #FFFFFF;
+    border-radius: 2px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-shadow: 0 0 1px #B4C5E3;
+}
+
+.ms_input .weui-label {
+    font-size: 0.4rem;
+    color: #262626;
+    display: inline-block;
+    border-right: 1px solid #E4E8EB
+}
+
+.ms_input .weui-label:after {
+    content: '*';
+    color: #FB0047;
+    margin-left: 2px;
+}
+
+.ms_input .weui-input {
+    margin-left: 0.5rem;
+    color: #0070FF !important;
+}
+
+.ms_input :-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #ACBFDA !important;
+    font-weight: normal;
+    font-family: PingFangSC-Regular;
+}
+
+.ms_input ::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: #ACBFDA !important;
+    font-weight: normal;
+    font-family: PingFangSC-Regular;
+}
+
+.ms_input input:-ms-input-placeholder,
+.ms_input textarea:-ms-input-placeholder {
+    color: #ACBFDA !important;
+    font-weight: normal;
+    font-family: PingFangSC-Regular;
+}
+
+.ms_input input::-webkit-input-placeholder,
+.ms_input textarea::-webkit-input-placeholder {
+    color: #ACBFDA !important;
+    font-weight: normal;
+    font-family: PingFangSC-Regular;
+}
+
+
+/* 文字显示为两行 */
+
+.line_two {
+    text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+
+/* 文字显示为一行 */
+
+.line_one {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cusTabBtn.vux-button-group>a {
+    font-size: 0.48rem;
+}

@@ -1,12 +1,12 @@
 {
-  "name": "service",
+  "name": "mblog_service",
   "version": "1.0.0",
-  "description": "",
+  "description": "私人博客",
   "main": "index.js",
   "scripts": {
     "service": "./node_modules/.bin/nodemon ./config/run"
   },
-  "author": "mavio",
+  "author": "麻绍微",
   "license": "ISC",
   "dependencies": {
     "koa": "^2.5.0",

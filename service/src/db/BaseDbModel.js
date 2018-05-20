@@ -47,11 +47,11 @@ export default class BaseDbModel{
      */
     getDefaultTableStructure() {
         return {
-            create_time: {      //创建时间
+            createTime: {      //创建时间
                 type: Date,
                 default: Date.now
             },
-            update_time: {      //更新时间
+            updateTime: {      //更新时间
                 type: Date,
                 default: Date.now
             },

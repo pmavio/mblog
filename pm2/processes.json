@@ -1,0 +1,42 @@
+{
+  "apps": [
+    {
+      "name": "mblog-api",
+      "cwd": "/home/mavio/codes/mblog/api/",
+      "script": "config/run",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "error_file": "/home/mavio/codes/logs/mblog/api/api.err.log",
+      "out_file": "/home/mavio/codes/logs/mblog/api/api.info.log",
+      "pid_file": "/home/mavio/codes/logs/mblog/api/api.pid",
+      "instances": 1,
+      "min_uptime": "60s",
+      "max_restarts": 15,
+      "max_memory_restart": "400M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": false,
+      "vizion": false,
+      "next_gen_js": true
+    },
+    {
+      "name": "mblog-service",
+      "cwd": "/home/mavio/codes/mblog/service/",
+      "script": "config/run",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "error_file": "/home/mavio/codes/logs/mblog/service/service.err.log",
+      "out_file": "/home/mavio/codes/logs/mblog/service/service.info.log",
+      "pid_file": "/home/mavio/codes/logs/mblog/service/service.pid",
+      "instances": 1,
+      "min_uptime": "60s",
+      "max_restarts": 15,
+      "max_memory_restart": "400M",
+      "watch": false,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": false,
+      "vizion": false,
+      "next_gen_js": true
+    }
+  ]
+}

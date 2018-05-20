@@ -1,3 +1,5 @@
+import * as qs from 'querystring';
+
 var postParse = {};
 
 ////////////////////////////////////////////////////////
@@ -21,13 +23,19 @@ postParse.parsePostData = function(ctx) {
 
 // 将POST请求参数字符串解析成JSON
 function parseQueryStr( queryStr ) {
-    var queryData = {}
-    var queryStrList = queryStr.split('&')
-    for (  var [ index, queryStr ] of queryStrList.entries()  ) {
-        var itemList = queryStr.split('=')
-        queryData[ itemList[0] ] = decodeURIComponent(itemList[1])
+    try {
+        return JSON.parse(queryStr);
+    }catch (e){
+        console.error(e);
+        return qs.parse(queryStr);
     }
-    return queryData
+    // var queryData = {}
+    // var queryStrList = queryStr.split('&')
+    // for (  var [ index, queryStr ] of queryStrList.entries()  ) {
+    //     var itemList = queryStr.split('=')
+    //     queryData[ itemList[0] ] = decodeURIComponent(itemList[1])
+    // }
+    // return queryData
 }
 ///////////////////////////////////////////////////////////////
 

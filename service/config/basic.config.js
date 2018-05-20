@@ -19,7 +19,6 @@ const config = {
     //jwt加密私钥
     sign: "byltest",
 
-    thirdParts: globalConfigs.getThirdPartConfigs(nodeEnv),
     isDealLdapSync: false,
 
     schedule: {

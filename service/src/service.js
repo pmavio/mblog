@@ -7,11 +7,14 @@ import dbModels from './db/dbModels';
 DB.registerModule('mblog', {
     dbUrl: 'mongodb://127.0.0.1:27017/mblog',
 });
+DB.registerModule('band', {
+    dbUrl: 'mongodb://127.0.0.1:27017/band',
+});
 DB.registerModule('default', {
     dbUrl: 'mongodb://127.0.0.1:27017/default',
 });
 DB.registerModule('public', {
-    dbUrl: 'mongodb://127.0.0.1:27017/system',
+    dbUrl: 'mongodb://127.0.0.1:27017/public',
 });
 
 // 捕获未处理的Promise异常，并记录log
@@ -49,10 +52,12 @@ service.use(async (ctx, next) => {
 //注册module的路由
 const systemRouters = require('./rest/public');
 const mblogRouters = require('./rest/mblog');
+const bandaiRouters = require('./rest/band');
 
 const routers = [
     systemRouters,
     mblogRouters,
+    bandaiRouters,
 ];
 for(let router of routers){
     service.use(router.routes(), router.allowedMethods());

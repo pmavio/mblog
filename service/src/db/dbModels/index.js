@@ -1,9 +1,11 @@
 import LogModel from './LogModel';
 import MenuModel from './MenuModel';
+import BandaiModel from './BandModel';
 
 const modelTypes = [
     LogModel,
     MenuModel,
+    BandaiModel,
 ];
 
 //tableName-modelType对应
