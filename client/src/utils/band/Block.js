@@ -5,6 +5,11 @@ import states from './states';
  */
 export default class Block{
 
+    static fromBlock(blockJson){
+        let block = new Block(blockJson.visible);
+        return block;
+    }
+
     /**
      *
      * @param visible 显示状态

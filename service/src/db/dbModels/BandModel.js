@@ -17,7 +17,7 @@ export default class BandModel extends BaseDbModel{
             bunch: Number,  //束数
             length: Number, //长度
 
-            initSwap: Boolean,    //初始状态，false为先上下，true为先刮搭
+            _initSwap: Boolean,    //初始状态，false为先上下，true为先刮搭
 
             lines: Object,   //
             blockMap: Object, //

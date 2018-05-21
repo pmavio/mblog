@@ -3,6 +3,15 @@ import Block from './Block';
 import Step from './program/Step';
 
 export default class Chain{
+
+    static fromChain(chainJson){
+        let chain = new Chain(chainJson.parity, chainJson.width);
+        chain.blocks = chainJson.blocks.map(block => {
+            return Block.fromBlock(block);
+        });
+        return chain;
+    }
+
     static fromBlocks(parity, blocks){
         if(!blocks) throw new Error('blocks不能为空');
         else if(!Array.isArray(blocks)) throw new Error('blocks不能为非数组');

@@ -16,6 +16,15 @@ import states from './states';
  */
 export default class Band{
 
+    static fromBand(bandJson){
+        let band = new Band(bandJson.bunch, bandJson.length, bandJson.initSwap);
+        Object.assign(band, bandJson);
+        band.lines = bandJson.lines.map(line => {
+            return Line.fromLine(line);
+        });
+        band.init(false);
+        return band;
+    }
 
     /**
      *
@@ -43,11 +52,13 @@ export default class Band{
     /**
      * 初始化縏带，所有束在背面
      */
-    init(){
+    init(reset=true){
         let swap = this.initSwap;
         let blockMap = [];
         for(let li=0; li<this.length; li++){
-            this.lines[li] = new Line(this.bunch, swap);
+            if(reset || !this.lines[li]){
+                this.lines[li] = new Line(this.bunch, swap);
+            }
             swap = !swap;
             blockMap.push(this.lines[li].blocks);
         }

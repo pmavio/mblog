@@ -2,11 +2,6 @@
     <div class="bandFlex bandEditor">
         <el-input v-if="band" v-model="band.name" placeholder="请输入图案名称"/>
 
-        <el-row>
-            <el-button type="primary" @click="importFromProgrameStringDialogVisible=true">从文字程序导入</el-button>
-            <el-button type="primary" @click="clipboardDialogVisible=true">从图片导入</el-button>
-        </el-row>
-
         <el-card class="bandFlex bandArea">
             <!--TODO index-->
 
@@ -81,7 +76,6 @@
                 <el-button type="primary" @click="importFromProgrameString">确 定</el-button>
             </div>
         </el-dialog>
-        <from-clipboard-dialog :showDialog="clipboardDialogVisible" @ensure="onFromClipboard"></from-clipboard-dialog>
     </div>
 </template>
 
@@ -94,12 +88,7 @@
     import states from '../../../utils/band/states';
     import Program from '../../../utils/band/program/Program';
 
-    import fromClipboardDialog from './dialogs/fromClipboardDialog.vue';
     export default {
-
-        components: {
-            fromClipboardDialog,
-        },
 
         data () {
           return {
@@ -203,14 +192,6 @@
                 }
             },
 
-            onFromClipboard(band){
-                this.clipboardDialogVisible = false;
-                if(!band || !band instanceof Band) return;
-                this.band = band;
-                this.blockMap = band.blockMap;
-                this.onBlockChanged();
-            },
-
             save(){
                 let band = this.band;
                 if(!band.name) {
@@ -221,15 +202,32 @@
                     });
                     return;
                 }
-                this.$store.dispatch('band/insert', this.band)
-                    .then(res => {
+                if(band.initSwap === undefined) {
+                    this.$message({
+                        showClose: true,
+                        message: '请选择縏带初始状态',
+                        type: 'warn'
+                    });
+                    return;
+                }
+                let promise = null;
+                if(this.band._id){
+                    promise = this.$store.dispatch('band/update', {
+                        condition: {_id: this.band._id},
+                        data: this.band
+                    });
+                }else{
+                    promise = this.$store.dispatch('band/insert', this.band);
+                }
+                promise.then(res => {
                         if(res.code === 0){
-                            //TODO 保存成功
+                            // 保存成功
                             this.$message({
                                 showClose: true,
                                 message: '保存成功',
                                 type: 'success'
                             });
+                            this.band._id = res.result._id;
                         }else{
                             this.$message({
                                 showClose: true,
@@ -237,31 +235,46 @@
                                 type: 'error'
                             });
                         }
+                        this.saveLocal();
                     })
                     .catch(err => {
+                        console.error(err);
                         this.$message({
                             showClose: true,
                             message: '保存出错:\n' + err.message,
                             type: 'error'
                         });
                     })
-            }
+            },
+
+            saveLocal(){
+                let saveRes = this.$store.dispatch('band/saveBandEditorPage', {band: this.band})
+            },
+
         },
+
         mounted(){
             document.body.onkeydown = this.onKeyDown;
             document.body.onkeyup = this.onKeyUp;
 
-            if(this.$route && this.$route.query){
-                this.query = this.$route.query;
-            }
-            console.log('query =', this.query)
-            let {name, initSwap, bunch, length} = this.query;
-            if(bunch && length){
-                bunch = Number(bunch);
-                length = Number(length);
-                initSwap = Boolean(initSwap);
-                this.band = new Band(bunch, length, initSwap);
-                this.blockMap = this.band.init();
+            let band = this.$store.state.band.bandEditor.band;
+
+            if(band){
+                console.log('get local band =', band);
+                this.band = Band.fromBand(band);
+                this.blockMap = this.band.blockMap;
+            }else{
+                if(this.$route && this.$route.query){
+                    this.query = this.$route.query;
+                }
+                let {name, initSwap, bunch, length} = this.query;
+                if(bunch && length){
+                    bunch = Number(bunch);
+                    length = Number(length);
+                    initSwap = Boolean(initSwap);
+                    this.band = new Band(bunch, length, initSwap);
+                    this.blockMap = this.band.init();
+                }
             }
         },
     }

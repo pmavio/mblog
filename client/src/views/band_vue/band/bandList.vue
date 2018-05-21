@@ -3,8 +3,15 @@
         <el-form ref="form" :inline="true" :model="form" label-width="80px">
 
             <el-form-item class="ant-condition-button">
-                <el-button type="primary" class="w100" @click="newbandDialogVisible=true">添加</el-button>
+                <el-button type="primary" class="w100" @click="newBandDialogVisible=true">添加</el-button>
             </el-form-item>
+            <el-form-item class="ant-condition-button">
+                <el-button type="primary" class="w100" @click="programStringDialogVisible=true">从文字程序导入</el-button>
+            </el-form-item>
+            <el-form-item class="ant-condition-button">
+                <el-button type="primary" class="w100" @click="clipboardDialogVisible=true">从图片导入</el-button>
+            </el-form-item>
+
         </el-form>
 
         <!--表格部分-->
@@ -39,6 +46,11 @@
                 </template>
             </el-table-column>
 
+            <el-table-column label="操作" width="120" align="center">
+                <template slot-scope="scope">
+                    <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                </template>
+            </el-table-column>
         </el-table>
 
         <!--分页效果-->
@@ -48,7 +60,7 @@
         </div>
 
 
-        <el-dialog title="新增縏带" :visible.sync="newbandDialogVisible">
+        <el-dialog title="新增縏带" :visible.sync="newBandDialogVisible">
             <el-form :model="newbandForm">
                 <el-form-item label="縏带图案名称" :label-width="formLabelWidth">
                     <el-input v-model="newbandForm.name" auto-complete="off"></el-input>
@@ -66,22 +78,31 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="newbandDialogVisible = false">取 消</el-button>
+                <el-button @click="newBandDialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="onNewband">确 定</el-button>
             </div>
         </el-dialog>
 
+        <from-clipboard-dialog :showDialog="clipboardDialogVisible" @ensure="onFromClipboard"></from-clipboard-dialog>
 
     </div>
 </template>
 
 <script>
+    import fromClipboardDialog from './dialogs/fromClipboardDialog.vue';
+
+    import Band from '../../../utils/band/Band';
     import states from '../../../utils/band/states';
     export default {
+        components: {
+            fromClipboardDialog,
+        },
+
         created() {
         },
+
         mounted: function () {
-            this.getConferenceCondition();
+            this.getBandList();
         },
         data() {
             return {
@@ -91,13 +112,14 @@
                 ],
 
                 formLabelWidth: '120px',
-                newbandDialogVisible: false,
+                newBandDialogVisible: false,
                 newbandForm: {
                     name: '',
                     initSwap: states.swap.unswap,
                     bunch: 17,
                     length: 64,
                 },
+                clipboardDialogVisible: false,
 
                 conference_area:[],
                 pageSizes: [10, 20, 30, 40],
@@ -111,94 +133,50 @@
         methods: {
             handleSizeChange(val) {
                 this.form.pageSize = val;
-                this.getConferenceCondition()
+                this.getBandList()
 
             },
             handleCurrentChange(val) {
                 this.form.currentPage = val; //当前页
-                this.getConferenceCondition()
-            },
-
-            //修改启用状态
-            changeSwitchValue(data){
-                //TODO
+                this.getBandList()
             },
 
             //根据条件筛选数据
-            getConferenceCondition(type){
+            getBandList(){
                 return this.$store.dispatch('band/getList',this.form).then(res=>{
-                    this.total = res.total
-                    if (res.code == 0) {
+                    this.total = res.total;
+                    if (res.code === 0) {
                         this.tableData = res.result
                     } else {
-                        this.tableData = []
+                        this.tableData = [];
                         this.total = 0
                     }
                 })
             },
             onNewband(){
-                this.newbandDialogVisible = false;
+                this.newBandDialogVisible = false;
+                this.$store.dispatch('band/resetBandEditorPage');
                 this.$router.push({
                     path: '/band/bandEditor',
                     query: this.newbandForm,
-                })
+                });
             },
-            //管理操作
-            handleEdit(index,data){
+            onFromClipboard(band){
+                this.clipboardDialogVisible = false;
+                if(!band || !band instanceof Band) return;
+                this.$store.dispatch('band/saveBandEditorPage', {band})
                 this.$router.push({
-                    path: '/conference/RegistrationEdit',
-                    query: {
-                        _id:data._id,
-                        "currentPage": this.form.currentPage,
-                        "pageSize": this.form.pageSize,
-                        "conference_area":this.form.conference_area,//办公区域
-                        "videoManger":this.form.videoManger,//办公大楼
-                        "conference_state": this.form.conference_state,//启用状态
-                    }
-                })
-            },
-            //删除操作
-            handleDelete(index,data){
-                this.$confirm('此操作将删除该数据, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    if (this.tableData.count < 0) return;
-                    return this.$store.dispatch('conferenceRegistration/conferenceDelete',{ _id: data._id,conference_video: data.conference_video }).then(res=>{
-                        if(res.code===0){
-                            this.getConferenceCondition()
-                            this.$message({
-                                type: 'success',
-                                message: '删除成功!',
-                                customClass:'cusNotice'
-                            });
-                        }else{
-                            console.log("删除失败的信息==",res)
-                            this.$message({
-                                type: 'warning',
-                                message: res.message,
-                                customClass:'warnNotice'
-                            });
-                        }
-                    })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
-                    });
+                    path: '/band/bandEditor',
                 });
             },
-            getMessage(message){
-                this.$confirm(message, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    showCancelButton: false,
-                    type: 'warning'
-                }).then(() => {
-                }).catch(() => {
+
+            handleEdit(band){
+                if(!band || !band instanceof Band) return;
+                this.$store.dispatch('band/saveBandEditorPage', {band})
+                this.$router.push({
+                    path: '/band/bandEditor',
                 });
-            },
+            }
         }
     };
 </script>

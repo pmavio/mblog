@@ -3,6 +3,14 @@ import states from './states';
 
 export default class Line{
 
+    static fromLine(lineJson){
+        let line = new Line(lineJson.bunch, lineJson.swap);
+        line.oddChain = Chain.fromChain(lineJson.oddChain);
+        line.eveChain = Chain.fromChain(lineJson.eveChain);
+        line.initBlocks();
+        return line;
+    }
+
     static fromChains(oddChain, eveChain, swap=states.swap.unswap){
         if(!oddChain){
             throw new Error('传入oddChain为空');
@@ -39,6 +47,11 @@ export default class Line{
         this.swap = swap;
         this.oddChain = new Chain(states.parity.odd, oddWidth);
         this.eveChain = new Chain(states.parity.eve, eveWidth);
+        this.initBlocks();
+    }
+
+    initBlocks(){
+        let bunch = this.bunch;
         this.blocks = new Array(bunch);
         for(let i=0; i<bunch; i++){
             let parity = i%2;

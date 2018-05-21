@@ -8,6 +8,10 @@ const band = {
 
     insert: function(data){
         return axios.setAxiosPostPromise('/api/band/band', data);
+    },
+
+    update: function(condition, data){
+        return axios.setAxiosPutPromise('/api/band/band', {condition, data});
     }
 
 };

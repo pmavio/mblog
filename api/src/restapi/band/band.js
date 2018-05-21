@@ -14,6 +14,7 @@ band.bindRouter(router, {
     getCount: true,
     getById: true,
     insert: true,
+    updateById: true,
     update: true,
     remove: false,
     removeById: true,

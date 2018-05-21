@@ -55,6 +55,7 @@ export default class BaseRouter extends koaRouter {
             getCount: true,
             findById: true,
             insert: true,
+            // updateById: true,
             update: true,
             remove: true,
             removeById: true,
@@ -115,15 +116,27 @@ export default class BaseRouter extends koaRouter {
             ctx.body = await Response.fromPromise(dbModel.insert(data));
         });
 
-        //id更新
+        // //id更新
+        // if(switchers.updateById)
+        // this.put('/:id', async ctx => {
+        //     const data = await this.getRequestParams(ctx);
+        //     //自动填入更新时间
+        //     if (data && !data.updateTime) {
+        //         data.updatTime = Date.now();
+        //     }
+        //     ctx.body = await Response.fromPromise(dbModel.updateOne(data).exec());
+        // });
+
+        //条件更新
         if(switchers.update)
         this.put('/', async ctx => {
-            const data = await this.getRequestParams(ctx);
+            const {condition, data} = await this.getRequestParams(ctx);
+            console.log(condition, data)
             //自动填入更新时间
             if (data && !data.updateTime) {
                 data.updatTime = Date.now();
             }
-            ctx.body = await Response.fromPromise(dbModel.updateOne(data).exec());
+            ctx.body = await Response.fromPromise(dbModel.update(condition, data).exec());
         });
 
         //条件删除,逻辑删除，仅把disabled字段设为true

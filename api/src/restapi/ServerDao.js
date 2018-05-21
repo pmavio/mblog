@@ -77,12 +77,22 @@ export default class ServerDao {
         );
     }
 
-    async update(data) {
-        if (typeof data !== 'string') {
-            data = querystring.stringify(data);
-        }
+    async updateById(_id, data) {
+        // if (typeof data !== 'string') {
+        //     data = querystring.stringify(data);
+        // }
         return await Response.fromPromise(
-            axios.put(this.getTableUrl(), data)
+            axios.put(this.getTableUrl(), {condition: {_id}, data})
+            .then(res => res.data)
+        );
+    }
+
+    async update(condition, data) {
+        // if (typeof data !== 'string') {
+        //     data = querystring.stringify(data);
+        // }
+        return await Response.fromPromise(
+            axios.put(this.getTableUrl(), {condition, data})
             .then(res => res.data)
         );
     }
@@ -175,10 +185,20 @@ export default class ServerDao {
             })
         }
 
+        if (options.updateById) {
+            router.put('/:id', async ctx => {
+                // const queryData = querystring.stringify(ctx.request.body);
+                let _id = ctx.params.id;
+                const data = ctx.request.body;
+                ctx.body = await self.updateById(_id, data);
+            })
+        }
+
         if (options.update) {
             router.put('/', async ctx => {
-                const queryData = querystring.stringify(ctx.request.body);
-                ctx.body = await self.update(queryData);
+                // const queryData = querystring.stringify(ctx.request.body);
+                const {condition, data} = ctx.request.body;
+                ctx.body = await self.update(condition, data);
             })
         }
 
