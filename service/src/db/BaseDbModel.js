@@ -88,9 +88,10 @@ export default class BaseDbModel{
         return this.dbModel.updateMany(conditions, dataArr, { upsert: true, multi: true });
     }
 
-    updateOne(data) {
-        const _id = data._id;
-        return this.dbModel.findOneAndUpdate({ _id }, { $set: data });
+    updateById(data, _id) {
+        if(!_id) _id = data._id;
+        if(data._id) delete data._id;
+        return this.dbModel.findByIdAndUpdate(_id, { $set: data });
     }
 
     update(conditions, data) {

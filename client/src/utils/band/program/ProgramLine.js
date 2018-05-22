@@ -12,8 +12,8 @@ export default class ProgramLine{
     }
 
     constructor(swap){
-        this.odd = null;
-        this.eve = null;
+        this.face = null;
+        this.back = null;
     }
 
 }

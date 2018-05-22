@@ -6,18 +6,18 @@
             <!--TODO index-->
 
             <div v-if="blockMap" class="bandFlex bandBlockArea">
-                <div v-for="(line, li) of blockMap"
+                <div v-for="(line, li) in blockMap"
                      :key="li"
                         class="bandFlex bandLine">
-                    <div v-for="(block, bi) of line"
+                    <div v-for="(block, bi) in line"
                          :key="bi"
                          @click="onClickBlock(block, bi, li)"
                          @mouseenter="onMouseEnter(block, bi, li)"
                         class="bandFlex bandBlock bandBlockBorder"
                          :class="{
                             bandBlockVisible: block.visible,
-                            bandBlockOddColor: !block.visible&&bi%2===0,
-                            bandBlockEveColor: !block.visible&&bi%2===1,
+                            bandBlockFaceColor: !block.visible&&bi%2===0,
+                            bandBlockBackColor: !block.visible&&bi%2===1,
                             bandBlockCenterColor: !block.visible&&bi*2+1===band.bunch
                         }">
                     </div>
@@ -29,7 +29,7 @@
 
         <el-select v-if="band" v-model="band.initSwap" @change="oninitSwapChange()">
             <el-option v-for="(item,i) in initSwapOptions"
-                :key="i"
+                :key="item.label"
                 :value="item.value"
                 :label="item.label"></el-option>
         </el-select>
@@ -42,7 +42,11 @@
                     v-model="programString">
             </el-input>
         </el-row>
-        <el-button @click="save()">保存</el-button>
+
+        <el-row>
+            <el-button @click="save()">保存</el-button>
+            <el-button @click="back()">返回</el-button>
+        </el-row>
 
         <el-dialog title="从文字程序导入縏带" :visible.sync="importFromProgrameStringDialogVisible">
             <el-form :model="importFromProgrameStringForm">
@@ -51,7 +55,7 @@
                 </el-form-item>
                 <el-form-item label="编织初始状态" :label-width="formLabelWidth">
                     <el-select v-model="importFromProgrameStringForm.initSwap" placeholder="请选择初始状态">
-                        <el-option v-for="item in initSwapOptions" :label="item.label" :value="item.value"></el-option>
+                        <el-option v-for="item in initSwapOptions" :key="item.label" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="縏带束数" :label-width="formLabelWidth">
@@ -212,8 +216,7 @@
                 }
                 let promise = null;
                 if(this.band._id){
-                    promise = this.$store.dispatch('band/update', {
-                        condition: {_id: this.band._id},
+                    promise = this.$store.dispatch('band/updateById', {
                         data: this.band
                     });
                 }else{
@@ -247,6 +250,10 @@
                     })
             },
 
+            back(){
+                this.$router.back(-1);
+            },
+
             saveLocal(){
                 let saveRes = this.$store.dispatch('band/saveBandEditorPage', {band: this.band})
             },
@@ -273,6 +280,7 @@
                     length = Number(length);
                     initSwap = Boolean(initSwap);
                     this.band = new Band(bunch, length, initSwap);
+                    this.band.name = name;
                     this.blockMap = this.band.init();
                 }
             }

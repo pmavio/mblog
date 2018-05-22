@@ -27,7 +27,7 @@ module.exports = {
             return response.data
         }).catch(err => {
             // throw err
-            onCatchError(err, url, params);
+            return onCatchError(err, url, params);
             // return new Response().failure('requesting ' + url + ' with params=' + params + '\ngot error: ' + err.message);
         })
     },
@@ -37,7 +37,7 @@ module.exports = {
             return response.data
         }).catch(err => {
             // throw err
-            onCatchError(err, url, data);
+            return onCatchError(err, url, data);
             // return new Response().failure('requesting ' + url + ' with params=' + params + '\ngot error: ' + err.message);
         })
     },
@@ -47,7 +47,7 @@ module.exports = {
             return response.data
         }).catch(err => {
             // throw err
-            onCatchError(err, url, data);
+            return onCatchError(err, url, data);
             // return new Response().failure('requesting ' + url + ' with params=' + params + '\ngot error: ' + err.message);
         })
     },
@@ -57,7 +57,7 @@ module.exports = {
             return response.data
         }).catch(err => {
             // throw err
-            onCatchError(err, url, params);
+            return onCatchError(err, url, params);
             // return new Response().failure('requesting ' + url + ' with params=' + params + '\ngot error: ' + err.message);
         })
     }

@@ -5,29 +5,29 @@ export default class Line{
 
     static fromLine(lineJson){
         let line = new Line(lineJson.bunch, lineJson.swap);
-        line.oddChain = Chain.fromChain(lineJson.oddChain);
-        line.eveChain = Chain.fromChain(lineJson.eveChain);
+        line.faceChain = Chain.fromChain(lineJson.faceChain);
+        line.backChain = Chain.fromChain(lineJson.backChain);
         line.initBlocks();
         return line;
     }
 
-    static fromChains(oddChain, eveChain, swap=states.swap.unswap){
-        if(!oddChain){
-            throw new Error('传入oddChain为空');
-        }else if(!oddChain instanceof Chain){
-            throw new Error('传入oddChain应为Chain类型');
-        }else if(!eveChain){
-            throw new Error('传入eveChain为空');
-        }else if(!eveChain instanceof Chain){
-            throw new Error('传入eveChain应为Chain类型');
-        }else if((oddChain.width-1)!==eveChain.width){
-            throw new Error('oddChain的长度应比eveChain的长度大1:\noddChain.width='+oddChain.width+',eveChain.width='+eveChain.width);
+    static fromChains(faceChain, backChain, swap=states.swap.unswap){
+        if(!faceChain){
+            throw new Error('传入faceChain为空');
+        }else if(!faceChain instanceof Chain){
+            throw new Error('传入faceChain应为Chain类型');
+        }else if(!backChain){
+            throw new Error('传入backChain为空');
+        }else if(!backChain instanceof Chain){
+            throw new Error('传入backChain应为Chain类型');
+        }else if(faceChain.width-backChain.width!==1){
+            throw new Error('faceChain和backChain的长度差应该为1:\nfaceChain.width='+faceChain.width+',backChain.width='+backChain.width);
         }
 
-        let bunch = oddChain.width + eveChain.width;
+        let bunch = faceChain.width + backChain.width;
         let line = new Line(bunch, swap);
-        line.oddChain = oddChain;
-        line.eveChain = eveChain;
+        line.faceChain = faceChain;
+        line.backChain = backChain;
 
         return line;
     }
@@ -40,13 +40,13 @@ export default class Line{
             throw new Error('swap应从states.swap中取值');
         }
 
-        let oddWidth = (bunch+1)/2;
-        let eveWidth = (bunch-1)/2;
+        let faceWidth = (bunch+1)/2;
+        let backWidth = (bunch-1)/2;
 
         this.bunch = bunch;
         this.swap = swap;
-        this.oddChain = new Chain(states.parity.odd, oddWidth);
-        this.eveChain = new Chain(states.parity.eve, eveWidth);
+        this.faceChain = new Chain(states.side.face, faceWidth);
+        this.backChain = new Chain(states.side.back, backWidth);
         this.initBlocks();
     }
 
@@ -54,9 +54,9 @@ export default class Line{
         let bunch = this.bunch;
         this.blocks = new Array(bunch);
         for(let i=0; i<bunch; i++){
-            let parity = i%2;
-            let chain = parity===0?this.oddChain:this.eveChain;
-            let ci = (i-parity)/2;
+            let side = i%2;
+            let chain = side===0?this.faceChain:this.backChain;
+            let ci = (i-side)/2;
             let block = chain.blocks[ci];
             // this.blocks[bunch-i-1] = block;
             this.blocks[i] = block;
@@ -74,8 +74,8 @@ export default class Line{
 
     generateProgramLine(){
         let programLine = {
-            odd: this.oddChain.generateProgramLineSteps(this.swap),
-            eve: this.eveChain.generateProgramLineSteps(this.swap),
+            face: this.faceChain.generateProgramLineSteps(this.swap),
+            back: this.backChain.generateProgramLineSteps(this.swap),
         };
         return programLine;
     }

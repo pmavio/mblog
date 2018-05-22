@@ -53,7 +53,7 @@ export default class Program{
         let blocks = band.init();
         for(let bi=0; bi<bunch; bi++){
             for(let li=0; li<length; li++){
-                blocks[li][bi].visible = map[bi][li];
+                blocks[li][bi].visible = map[bunch-bi-1][li];
             }
         }
         return band;
@@ -149,18 +149,18 @@ export default class Program{
         let swap = initSwap;
         console.log(program)
         for(let i=0; i<program.length; i++){
-            let {odd, eve} = program[i];
+            let {face, back} = program[i];
 
-            let oddStr = Program.toProgramLineStepsString(odd, swap);
-            let eveStr = Program.toProgramLineStepsString(eve, swap);
+            let faceStr = Program.toProgramLineStepsString(face, swap);
+            let backStr = Program.toProgramLineStepsString(back, swap);
 
             let left,right;
             if(swap===states.swap.unswap){
-                left = eveStr;
-                right = oddStr;
+                left = backStr;
+                right = faceStr;
             }else{
-                left = oddStr;
-                right = eveStr;
+                left = faceStr;
+                right = backStr;
             }
             str += '〔'+(i+1)+'〕'+left+'◆'+right+'\n';
             swap = !swap;

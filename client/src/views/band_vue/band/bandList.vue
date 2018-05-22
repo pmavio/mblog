@@ -6,10 +6,10 @@
                 <el-button type="primary" class="w100" @click="newBandDialogVisible=true">添加</el-button>
             </el-form-item>
             <el-form-item class="ant-condition-button">
-                <el-button type="primary" class="w100" @click="programStringDialogVisible=true">从文字程序导入</el-button>
+                <el-button type="primary" class="w150" @click="programStringDialogVisible=true">从文字程序导入</el-button>
             </el-form-item>
             <el-form-item class="ant-condition-button">
-                <el-button type="primary" class="w100" @click="clipboardDialogVisible=true">从图片导入</el-button>
+                <el-button type="primary" class="w150" @click="clipboardDialogVisible=true">从图片导入</el-button>
             </el-form-item>
 
         </el-form>
@@ -67,7 +67,7 @@
                 </el-form-item>
                 <el-form-item label="编织初始状态" :label-width="formLabelWidth">
                     <el-select v-model="newbandForm.initSwap" placeholder="请选择初始状态">
-                        <el-option v-for="item in initSwapOptions" :label="item.label" :value="item.value"></el-option>
+                        <el-option v-for="item in initSwapOptions" :key="item.label" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="縏带束数" :label-width="formLabelWidth">

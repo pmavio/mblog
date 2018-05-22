@@ -2,7 +2,7 @@
     <el-dialog
             id="fromClipboardDialogBody"
             title='从图片导入'
-            :visible.sync="showDialog"
+            :visible.sync="visible"
             width="780px"
             class="baseAlert">
         <el-form :model="form">
@@ -22,7 +22,7 @@
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="showDialog = false">取 消</el-button>
+            <el-button @click="visible = false">取 消</el-button>
             <el-button type="primary" @click="onEnsure()">确 定</el-button>
         </div>
     </el-dialog>
@@ -116,7 +116,7 @@
         mounted(){
             let self = this;
             document.getElementById("fromClipboardDialogBody").addEventListener( 'paste', function( e ){
-                if(!self.showDialog) return;
+                if(!self.visible) return;
                 let img = document.getElementById('fromClipboardDialogImage');
 
                 var clipboardData = e.clipboardData,
@@ -164,8 +164,16 @@
             },
         },
 
+        watch: {
+            showDialog () {
+                this.visible = this.showDialog;
+            }
+        },
+
         data(){
             return {
+                visible: this.showDialog,
+
                 formLabelWidth: '80px',
 
                 img: null,

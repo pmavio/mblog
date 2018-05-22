@@ -5,14 +5,14 @@ import Step from './program/Step';
 export default class Chain{
 
     static fromChain(chainJson){
-        let chain = new Chain(chainJson.parity, chainJson.width);
+        let chain = new Chain(chainJson.side, chainJson.width);
         chain.blocks = chainJson.blocks.map(block => {
             return Block.fromBlock(block);
         });
         return chain;
     }
 
-    static fromBlocks(parity, blocks){
+    static fromBlocks(side, blocks){
         if(!blocks) throw new Error('blocks不能为空');
         else if(!Array.isArray(blocks)) throw new Error('blocks不能为非数组');
         for(let block of blocks){
@@ -22,7 +22,7 @@ export default class Chain{
 
         let width = blocks.length;
 
-        let chain = new Chain(parity, width, false);
+        let chain = new Chain(side, width, false);
         chain.blocks = blocks;
 
         return chain;
@@ -30,20 +30,13 @@ export default class Chain{
 
     /**
      *
-     * @param parity 奇偶性
+     * @param side 表背面
      * @param width 长度
      */
-    constructor(parity, width){
+    constructor(side, width){
         if(!Number.isInteger(width) || width<=0) throw new Error('链长度应为正整数');
-        if(parity === states.parity.odd){
-            if(width %2 === 0) throw new Error('奇数链长度应为奇数而不是'+width);
-        }else if(parity === states.parity.eve){
-            if(width %2 === 1) throw new Error('偶数链长度应为偶数而不是'+width);
-        }else{
-            throw new Error('链的parity值错误，应从states.parity中获取');
-        }
 
-        this.parity = parity;
+        this.side = side;
         this.width = width;
         this.blocks = new Array(width).fill(null).map(n=>new Block(false));
     }
@@ -52,7 +45,7 @@ export default class Chain{
         let steps = [];
         let count = 0, lastOperation = null;
         for(let block of this.blocks){
-            let operation = block.getOperation(swap, this.parity);
+            let operation = block.getOperation(swap, this.side);
             if(lastOperation !== operation){
                 if(count > 0 && lastOperation){
                     //记录步骤

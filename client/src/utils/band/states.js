@@ -1,10 +1,10 @@
 const states = {
     /**
-     * Chain的奇偶性
+     * Chain的所在面，表面和背面
      */
-    parity: {
-        odd: true,  //奇数
-        eve: false  //偶数
+    side: {
+        face: true,  //表面
+        back: false  //背面
     },
 
     /**

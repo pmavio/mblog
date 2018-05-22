@@ -82,7 +82,7 @@ export default class ServerDao {
         //     data = querystring.stringify(data);
         // }
         return await Response.fromPromise(
-            axios.put(this.getTableUrl(), {condition: {_id}, data})
+            axios.put(this.getTableUrl() + '/' + _id, data)
             .then(res => res.data)
         );
     }
