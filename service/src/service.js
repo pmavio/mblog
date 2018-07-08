@@ -5,16 +5,16 @@ import dbModels from './db/dbModels';
 
 // 初始化module对应的db连接配置 TODO
 DB.registerModule('mblog', {
-    dbUrl: 'mongodb://127.0.0.1:27017/mblog',
+    dbUrl: 'mongodb://192.168.31.99:27017/mblog',
 });
 DB.registerModule('band', {
-    dbUrl: 'mongodb://127.0.0.1:27017/band',
+    dbUrl: 'mongodb://192.168.31.99:27017/band',
 });
 DB.registerModule('default', {
-    dbUrl: 'mongodb://127.0.0.1:27017/default',
+    dbUrl: 'mongodb://192.168.31.99:27017/default',
 });
 DB.registerModule('public', {
-    dbUrl: 'mongodb://127.0.0.1:27017/public',
+    dbUrl: 'mongodb://192.168.31.99:27017/public',
 });
 
 // 捕获未处理的Promise异常，并记录log
