@@ -19,12 +19,12 @@
     },
 
     "dns": {
-        "enable": false,
-        "default": "http://127.0.0.1:3001/",
+        "enable": true,
+        "default": "http://pmavio.com:3001/",
         "forceUseDefault": false,
-        "client": "http://127.0.0.1:3001/",
-        "api": "http://127.0.0.1:3001/",
-        "service": "http://127.0.0.1:3000/"
+        "client": "http://pmavio.com:3001/",
+        "api": "http://pmavio.com:3001/",
+        "service": "http://pmavio.com:3000/"
     },
 
     "mongodb": {
