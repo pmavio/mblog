@@ -196,6 +196,7 @@
                 }, function(base, canvas){
                     let map = getImageMap(canvas);
                     let band = Program.fromClipboardImage(map);
+                    band.name = self.form.name;
                     self.$emit('ensure', band);
                 });
             }

@@ -10,6 +10,22 @@ export default class Block{
         return block;
     }
 
+    static getVisible(operation, swap, side){
+        if(swap === states.swap.unswap){
+            if(side === states.side.face){
+                return !operation.modify;
+            }else{
+                return operation.modify;
+            }
+        }else {
+            if(side === states.side.face){
+                return operation.modify;
+            }else{
+                return !operation.modify;
+            }
+        }
+    }
+
     /**
      *
      * @param visible 显示状态

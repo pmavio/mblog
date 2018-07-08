@@ -26,6 +26,23 @@ export default class Band{
         return band;
     }
 
+    static fromLines(lines){
+        if(!lines) throw new Error('lines不能为空');
+        else if(!Array.isArray(lines)) throw new Error('lines不是一个数组');
+        else if(lines.length < 1) throw new Error('lines长度不能小于1');
+        for(let i=0; i<lines.length; i++){
+            let line = lines[i];
+            if(!line instanceof Line) throw new Error('index='+i+'处不是Line类型');
+        }
+
+        let firstLine = lines[0];
+        let band = new Band(firstLine.bunch, lines.length, firstLine.swap);
+        band.lines = lines;
+        band.init(false);
+
+        return band;
+    }
+
     /**
      *
      * @param bunch 束数
@@ -37,7 +54,7 @@ export default class Band{
         else if(bunch < 3) throw new Error('bunch值不能小于3');
         else if(bunch % 2 === 0) throw new Error('bunch值只能为奇数');
         else if(!length) throw new Error('length值不能为空');
-        else if(length < 3) throw new Error('length值不能小于3');
+        else if(length < 1) throw new Error('length值不能小于1');
         else if(initSwap !== states.swap.unswap && initSwap !== states.swap.swaped){
             throw new Error('initSwap应从states.swap中取值');
         }

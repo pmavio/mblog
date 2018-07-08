@@ -16,7 +16,7 @@ export default class Chain{
         if(!blocks) throw new Error('blocks不能为空');
         else if(!Array.isArray(blocks)) throw new Error('blocks不能为非数组');
         for(let block of blocks){
-            if(!block) throw new Error('blocks[' + blocks.indexOf(block) + ']不能为空');
+            if(block === undefined || block === null) throw new Error('blocks[' + blocks.indexOf(block) + ']不能为空');
             else if(!block instanceof Block) throw new Error('blocks[' + blocks.indexOf(block) + ']的类型不为Block');
         }
 

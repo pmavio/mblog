@@ -6,7 +6,7 @@
                 <el-button type="primary" class="w100" @click="newBandDialogVisible=true">添加</el-button>
             </el-form-item>
             <el-form-item class="ant-condition-button">
-                <el-button type="primary" class="w150" @click="programStringDialogVisible=true">从文字程序导入</el-button>
+                <el-button type="primary" class="w150" @click="stringDialogVisible=true">从文字程序导入</el-button>
             </el-form-item>
             <el-form-item class="ant-condition-button">
                 <el-button type="primary" class="w150" @click="clipboardDialogVisible=true">从图片导入</el-button>
@@ -83,18 +83,21 @@
             </div>
         </el-dialog>
 
+        <from-string-dialog :showDialog="stringDialogVisible" @ensure="onFromString"></from-string-dialog>
         <from-clipboard-dialog :showDialog="clipboardDialogVisible" @ensure="onFromClipboard"></from-clipboard-dialog>
 
     </div>
 </template>
 
 <script>
+    import fromStringDialog from './dialogs/fromStringDialog.vue';
     import fromClipboardDialog from './dialogs/fromClipboardDialog.vue';
 
     import Band from '../../../utils/band/Band';
     import states from '../../../utils/band/states';
     export default {
         components: {
+            fromStringDialog,
             fromClipboardDialog,
         },
 
@@ -120,6 +123,7 @@
                     length: 64,
                 },
                 clipboardDialogVisible: false,
+                stringDialogVisible: false,
 
                 conference_area:[],
                 pageSizes: [10, 20, 30, 40],
@@ -163,6 +167,14 @@
             },
             onFromClipboard(band){
                 this.clipboardDialogVisible = false;
+                if(!band || !band instanceof Band) return;
+                this.$store.dispatch('band/saveBandEditorPage', {band})
+                this.$router.push({
+                    path: '/band/bandEditor',
+                });
+            },
+            onFromString(band){
+                this.stringDialogVisible = false;
                 if(!band || !band instanceof Band) return;
                 this.$store.dispatch('band/saveBandEditorPage', {band})
                 this.$router.push({

@@ -270,6 +270,7 @@
                 console.log('get local band =', band);
                 this.band = Band.fromBand(band);
                 this.blockMap = this.band.blockMap;
+                this.onBlockChanged();
             }else{
                 if(this.$route && this.$route.query){
                     this.query = this.$route.query;

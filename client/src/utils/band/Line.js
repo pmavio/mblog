@@ -28,6 +28,7 @@ export default class Line{
         let line = new Line(bunch, swap);
         line.faceChain = faceChain;
         line.backChain = backChain;
+        line.initBlocks();
 
         return line;
     }
