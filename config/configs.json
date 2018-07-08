@@ -29,7 +29,7 @@
 
     "mongodb": {
         "auto": false,
-        "ip": "127.0.0.1",
+        "ip": "192.168.31.98",
         "port": "27017",
         "defaultDBName": "mblog",
         "forceUseDefault": false
