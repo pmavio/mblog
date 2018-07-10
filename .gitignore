@@ -58,3 +58,6 @@ typings/
 .env
 
 package-lock.json
+
+api/dist/band/band.js
+client/config/config.json
