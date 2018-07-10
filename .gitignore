@@ -60,4 +60,5 @@ typings/
 package-lock.json
 
 api/dist/band/band.js
+api/dist/band/band.css
 client/config/config.json
