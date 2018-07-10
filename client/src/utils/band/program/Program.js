@@ -226,44 +226,62 @@ export default class Program{
         let lines = [];
         let swap = initSwap;
         //转换文字程序
-        for(let strLine of strLines){
-            //忽略空行，总长度缩减
-            if(strLine.trim().length === 0) {
-                length --;
-                continue;
+        // for(let strLine of strLines){
+        for(let i=0; i<strLines.length; i++){
+            try {
+                let strLine = strLines[i];
+
+                //忽略空行，总长度缩减
+                if (strLine.trim().length === 0) {
+                    length--;
+                    continue;
+                }
+                //获得表背链列表
+                let chains = strLine.split(sideSeparator);
+
+                //验证表背链有效性
+                if (chains.length === 1) {
+                    //当链数小于2时，处理隐藏不上、不下、不搭、不刮的情况
+                    let chainStr = chains[0];
+
+                    if(chainStr.indexOf('上')>=0 && chainStr.indexOf('下')<0){
+                        chains.push('不下');
+                    }else if(chainStr.indexOf('下')>=0 && chainStr.indexOf('上')<0){
+                        chains.unshift('不上');
+                    }else if(chainStr.indexOf('搭')>=0 && chainStr.indexOf('刮')<0){
+                        chains.push('不刮');
+                    }else if(chainStr.indexOf('刮')>=0 && chainStr.indexOf('搭')<0){
+                        chains.unshift('不搭');
+                    }
+                }
+
+                //区分表背链
+                let faceChainStr, backChainStr;
+                let [chainStr0, chainStr1] = chains;
+                if (!swap) {
+                    faceChainStr = chainStr1;
+                    backChainStr = chainStr0;
+                } else {
+                    faceChainStr = chainStr0;
+                    backChainStr = chainStr1;
+                }
+
+                let faceWidth = (bunch + 1) / 2, backWidth = (bunch - 1) / 2;
+                //转换口语化文字程序行
+                faceChainStr = parseStrLineToLogicStrLine(faceChainStr, faceWidth);
+                backChainStr = parseStrLineToLogicStrLine(backChainStr, backWidth);
+                //转化成blocks
+                let faceBlocks = parseStrLineToBlocks(faceWidth, faceChainStr, swap, states.side.face);
+                let backBlocks = parseStrLineToBlocks(backWidth, backChainStr, swap, states.side.back);
+
+                let faceChain = Chain.fromBlocks(states.side.face, faceBlocks);
+                let backChain = Chain.fromBlocks(states.side.back, backBlocks);
+
+                let line = Line.fromChains(faceChain, backChain, swap);
+                lines.push(line);
+            } catch (e) {
+                throw new Error('第'+(i+1)+ '行报错：' + e.message);
             }
-            //获得表背链列表
-            let chains = strLine.split(sideSeparator);
-            //验证表背链有效性
-            if(chains.length < 2) {
-                //当链数小于2时，忽略并预留该行
-                continue;
-            }
-
-            //区分表背链
-            let faceChainStr, backChainStr;
-            let [chainStr0, chainStr1] = chains;
-            if(!swap){
-                faceChainStr = chainStr1;
-                backChainStr = chainStr0;
-            }else{
-                faceChainStr = chainStr0;
-                backChainStr = chainStr1;
-            }
-
-            let faceWidth = (bunch+1)/2, backWidth = (bunch-1)/2;
-            //转换口语化文字程序行
-            faceChainStr = parseStrLineToLogicStrLine(faceChainStr, faceWidth);
-            backChainStr = parseStrLineToLogicStrLine(backChainStr, backWidth);
-            //转化成blocks
-            let faceBlocks = parseStrLineToBlocks(faceWidth, faceChainStr, swap, states.side.face);
-            let backBlocks = parseStrLineToBlocks(backWidth, backChainStr, swap, states.side.back);
-
-            let faceChain = Chain.fromBlocks(states.side.face, faceBlocks);
-            let backChain = Chain.fromBlocks(states.side.back, backBlocks);
-
-            let line = Line.fromChains(faceChain, backChain, swap);
-            lines.push(line);
 
             //更新swap状态
             swap = !swap;
