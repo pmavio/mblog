@@ -315,11 +315,12 @@
 }
 .bandBlockBorder[data-v-405e693b]{
     border: 1px solid #BDBDBD;
+    box-sizing: border-box;
 }
-.bandBlockOddColor[data-v-405e693b]{
+.bandBlockBackColor[data-v-405e693b]{
     background-color: white;
 }
-.bandBlockEveColor[data-v-405e693b]{
+.bandBlockFaceColor[data-v-405e693b]{
     background-color: #e1f5fe;
 }
 .bandBlockCenterColor[data-v-405e693b]{

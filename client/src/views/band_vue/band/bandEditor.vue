@@ -9,6 +9,9 @@
                 <div v-for="(line, li) in blockMap"
                      :key="li"
                         class="bandFlex bandLine">
+                    <el-tooltip effect="dark" :content="programStringArray[li]" placement="bottom">
+                        <button class="bandBlock">{{li+1}}</button>
+                    </el-tooltip>
                     <div v-for="(block, bi) in line"
                          :key="bi"
                          @click="onClickBlock(block, bi, li)"
@@ -21,6 +24,9 @@
                             bandBlockCenterColor: !block.visible&&bi*2+1===band.bunch
                         }">
                     </div>
+                    <el-tooltip effect="dark" :content="programStringArray[li]" placement="top">
+                        <button class="bandBlock">{{li+1}}</button>
+                    </el-tooltip>
                 </div>
 
 
@@ -114,6 +120,7 @@
               band: null,
               blockMap: [],
               program: [],
+              programStringArray: [],
               programString: '',
 
               formLabelWidth: '120px',
@@ -151,6 +158,7 @@
             onBlockChanged(block, bi, li){
                 this.program = this.band.generateProgram();
                 this.programString = Program.toProgramString(this.program, this.band.initSwap);
+                this.programStringArray = this.programString.split('\n');
             },
 
             oninitSwapChange(){
@@ -322,12 +330,13 @@
 
     .bandBlockBorder{
         border: 1px solid #BDBDBD;
+        box-sizing: border-box;
     }
 
-    .bandBlockOddColor{
+    .bandBlockBackColor{
         background-color: white;
     }
-    .bandBlockEveColor{
+    .bandBlockFaceColor{
         background-color: #e1f5fe;
     }
     .bandBlockCenterColor{
