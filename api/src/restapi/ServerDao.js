@@ -35,20 +35,14 @@ export default class ServerDao {
                 .then(res => res.data);
         let countPromise = pageSize?axios.get(this.getTableUrl()+'/count', {params: conditions})
                 .then(res => res.data)
-                .then(count => {
-                    count = Response.isSuccess(count)?count.result:1;
-                    pageSize = Number.parseFloat(pageSize);
-                    return Math.ceil(count/pageSize)
-                })
-                .catch(err => 1)
-            :new Promise((res) => res(1));
+            :new Promise((res) => res(0));
         return await Promise.all([
                 Response.fromPromise(listPromise),
                 countPromise,
             ])
-            .then(([list, pageCount]) => {
-                if(Response.isSuccess(list)) {
-                    list.total = pageCount;
+            .then(([list, totalCount]) => {
+                if(Response.isSuccess(list) && Response.isSuccess(totalCount)) {
+                    list.total = totalCount.result;
                 }
                 return list;
             });

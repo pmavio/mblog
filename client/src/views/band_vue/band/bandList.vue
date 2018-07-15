@@ -108,7 +108,8 @@
             this.getBandList();
         },
         data() {
-            return {
+            let  pageSizes = [20, 40, 80, 200];
+                return {
                 initSwapOptions: [
                     {value: states.swap.unswap, label: "先上下"},
                     {value: states.swap.swaped, label: "先刮搭"},
@@ -126,10 +127,10 @@
                 stringDialogVisible: false,
 
                 conference_area:[],
-                pageSizes: [10, 20, 30, 40],
-                total: 1, //分页的数据Int类型
+                pageSizes: pageSizes,
+                total: 0, //分页的数据Int类型
                 form: {
-                    pageSize: 10,
+                    pageSize: pageSizes[0],
                     currentPage: 1,
                 },
                 tableData:[]
@@ -152,7 +153,7 @@
                     this.total = res.total;
                     if (res.code === 0) {
                         this.tableData = res.result
-                        this.total = res.total ? res.total:1;
+                        this.total = res.total ? res.total:0;
                     } else {
                         this.tableData = [];
                         this.total = 1;
