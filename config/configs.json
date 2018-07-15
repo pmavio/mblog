@@ -19,7 +19,7 @@
     },
 
     "dns": {
-        "enable": true,
+        "enable": false,
         "default": "http://pmavio.com:3001/",
         "forceUseDefault": false,
         "client": "http://pmavio.com:3001/",

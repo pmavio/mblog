@@ -329,4 +329,6 @@
 .bandBlockVisible[data-v-405e693b]{
     background-color: #000000;
 }
-
+.lineTipText[data-v-405e693b]{
+    font-size: 20px;
+}

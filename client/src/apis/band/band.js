@@ -6,6 +6,12 @@ const band = {
         return axios.setAxiosGetPromise('/api/band/band', query);
     },
 
+    getById(query){
+        if(!query) return new Promise((res, rej) => rej(new Error('没有获得id')));
+        let {_id} = query;
+        return axios.setAxiosGetPromise('/api/band/band/'+_id);
+    },
+
     insert: function(data){
         return axios.setAxiosPostPromise('/api/band/band', data);
     },

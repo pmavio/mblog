@@ -29,15 +29,29 @@ export default class ServerDao {
         return await postParse.parsePostData(ctx);
     }
 
-    async getList(conditions = {
-        currentPage: null,
-        pageSize: null,
-        sort: null,
-    }) {
-        return await Response.fromPromise(
-            axios.get(this.getTableUrl(), { params: conditions })
-            .then(res => res.data)
-        );
+    async getList(conditions) {
+        let pageSize = conditions?conditions.pageSize:null;
+        let listPromise = axios.get(this.getTableUrl(), { params: conditions })
+                .then(res => res.data);
+        let countPromise = pageSize?axios.get(this.getTableUrl()+'/count', {params: conditions})
+                .then(res => res.data)
+                .then(count => {
+                    count = Response.isSuccess(count)?count.result:1;
+                    pageSize = Number.parseFloat(pageSize);
+                    return Math.ceil(count/pageSize)
+                })
+                .catch(err => 1)
+            :new Promise((res) => res(1));
+        return await Promise.all([
+                Response.fromPromise(listPromise),
+                countPromise,
+            ])
+            .then(([list, pageCount]) => {
+                if(Response.isSuccess(list)) {
+                    list.total = pageCount;
+                }
+                return list;
+            });
     }
 
     async getListByIds(ids) {

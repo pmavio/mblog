@@ -9,7 +9,8 @@
                 <div v-for="(line, li) in blockMap"
                      :key="li"
                         class="bandFlex bandLine">
-                    <el-tooltip effect="dark" :content="programStringArray[li]" placement="bottom">
+                    <el-tooltip effect="dark" placement="bottom">
+                        <div class="lineTipText" slot="content">{{programStringArray[li]}}</div>
                         <button class="bandBlock">{{li+1}}</button>
                     </el-tooltip>
                     <div v-for="(block, bi) in line"
@@ -24,7 +25,8 @@
                             bandBlockCenterColor: !block.visible&&bi*2+1===band.bunch
                         }">
                     </div>
-                    <el-tooltip effect="dark" :content="programStringArray[li]" placement="top">
+                    <el-tooltip effect="dark" placement="top">
+                        <div class="lineTipText" slot="content">{{programStringArray[li]}}</div>
                         <button class="bandBlock">{{li+1}}</button>
                     </el-tooltip>
                 </div>
@@ -274,24 +276,31 @@
 
             let band = this.$store.state.band.bandEditor.band;
 
-            if(band){
-                console.log('get local band =', band);
+            if(!band){
+                //TODO 提醒未获得数据
+                return;
+            }
+
+            console.log('get local band =', band);
+            if(band._id) {
+                this.$store.dispatch('band/getById', {_id: band._id})
+                    .then(res => {
+                        if(res.code === 0){
+                            this.band = Band.fromBand(res.result);
+                            this.blockMap = this.band.blockMap;
+                            this.onBlockChanged();
+                        }else{
+                            //TODO 提醒id获取错误
+                        }
+                    })
+                    .catch(err => {
+                        //TODO 提示错误
+                        console.error(err);
+                    });
+            }else{
                 this.band = Band.fromBand(band);
                 this.blockMap = this.band.blockMap;
                 this.onBlockChanged();
-            }else{
-                if(this.$route && this.$route.query){
-                    this.query = this.$route.query;
-                }
-                let {name, initSwap, bunch, length} = this.query;
-                if(bunch && length){
-                    bunch = Number(bunch);
-                    length = Number(length);
-                    initSwap = Boolean(initSwap);
-                    this.band = new Band(bunch, length, initSwap);
-                    this.band.name = name;
-                    this.blockMap = this.band.init();
-                }
             }
         },
     }
@@ -346,4 +355,7 @@
         background-color: #000000;
     }
 
+    .lineTipText{
+        font-size: 20px;
+    }
 </style>

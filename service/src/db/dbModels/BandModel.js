@@ -26,4 +26,9 @@ export default class BandModel extends BaseDbModel{
             sideSeparator: String,  //文字编织程序的面分隔符
         }
     }
+
+
+    getList(conditions) {
+        return this.dbModel.find(conditions, {name: 1, tags: 1, bunch: 1, length:1, _initSwap: 1, lineSeparator:1, sideSeparator:1});
+    }
 }

@@ -90,6 +90,17 @@ export default class BaseRouter extends koaRouter {
             if (sortOrder) promise.sort(sortOrder);
 
             ctx.body = await Response.fromPromise(promise.exec());
+            // let listPromise = promise.exec();
+            // let countPromise = pageSize?dbModel.getCount(conditions):new Promise(res=>res(0));
+            //
+            // ctx.body = await Promise.all([Response.fromPromise(listPromise), countPromise])
+            //     .then(([response, count])=>{
+            //         if(Response.isSuccess(response) && pageSize > 0){
+            //             //返回总页数
+            //             response.total = Math.round(count/pageSize);
+            //         }
+            //         return response;
+            //     });
         });
 
         //计数

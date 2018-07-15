@@ -9,8 +9,15 @@ export default class Response {
         }else if(response instanceof Error){
             return new Response().failure(response.stack);
         }
+
         if (response.code !== undefined) {
-            return new Response(response.result, response.code, response.message, response.source);
+            // return new Response(response.result, response.code, response.message, response.source);
+
+            let result = new Response();
+            Object.keys(response)
+                .forEach(key => result[key] = response[key]);
+
+            return result;
         } else {
             return new Response(response);
         }
@@ -73,13 +80,14 @@ export default class Response {
     }
 
     get() {
-        return {
-            code: this.code,
-            message: this.message,
-            result: this.result,
-            source: this.source,
-            duration: this.duration,
-        }
+        // return {
+        //     code: this.code,
+        //     message: this.message,
+        //     result: this.result,
+        //     source: this.source,
+        //     duration: this.duration,
+        // }
+        return this;
     }
 
     toString() {

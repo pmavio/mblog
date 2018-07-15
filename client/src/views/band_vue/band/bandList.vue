@@ -127,9 +127,10 @@
 
                 conference_area:[],
                 pageSizes: [10, 20, 30, 40],
-                total: 0, //分页的数据Int类型
+                total: 1, //分页的数据Int类型
                 form: {
                     pageSize: 10,
+                    currentPage: 1,
                 },
                 tableData:[]
             }
@@ -151,19 +152,28 @@
                     this.total = res.total;
                     if (res.code === 0) {
                         this.tableData = res.result
+                        this.total = res.total ? res.total:1;
                     } else {
                         this.tableData = [];
-                        this.total = 0
+                        this.total = 1;
                     }
                 })
             },
             onNewband(){
                 this.newBandDialogVisible = false;
-                this.$store.dispatch('band/resetBandEditorPage');
-                this.$router.push({
-                    path: '/band/bandEditor',
-                    query: this.newbandForm,
-                });
+
+                let {name, initSwap, bunch, length} = this.newbandForm;
+                if(bunch && length){
+                    bunch = Number(bunch);
+                    length = Number(length);
+                    initSwap = Boolean(initSwap);
+                    let band = new Band(bunch, length, initSwap);
+                    band.name = name;
+                    this.$store.dispatch('band/saveBandEditorPage', {band})
+                    this.$router.push({
+                        path: '/band/bandEditor',
+                    });
+                }
             },
             onFromClipboard(band){
                 this.clipboardDialogVisible = false;
