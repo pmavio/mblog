@@ -2,7 +2,7 @@ const axios = require("axios")
 const Response = require('../restapi/Response');
 const qs = require('querystring');
 
-axios.defaults.timeout = 5000
+axios.defaults.timeout = 30000;
 axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded;charset=UTF-8";
 // axios.defaults.paramsSerializer = function(params) {
 //     const result = queryString.stringify(params, {arrayFormat: 'repeat'})
