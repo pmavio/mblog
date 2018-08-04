@@ -23,8 +23,12 @@ const band = {
     updateById: function({_id, data}){
         if(!_id) _id = data._id;
         return axios.setAxiosPutPromise('/api/band/band/'+_id, data);
-    }
+    },
 
+    deleteById: function({_id}){
+        if(!_id) return;
+        return axios.setAxiosDeletePromise('/api/band/band/'+_id);
+    },
 };
 
 

@@ -18,7 +18,7 @@
         <el-table :data="tableData" :fit='true' style="width: 100%" class="listTable">
             <el-table-column label="序号" width="70" align="center">
                 <template slot-scope="scope">
-                    <span>{{ scope.$index +1}}</span>
+                    <span>{{ scope.$index + 1}}</span>
                 </template>
             </el-table-column>
 
@@ -42,20 +42,23 @@
 
             <el-table-column label="初始状态" width="120" align="center">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.initSwap?"先刮搭":"先上下" }}</span>
+                    <span>{{ scope.row.initSwap ? "先刮搭" : "先上下" }}</span>
                 </template>
             </el-table-column>
 
             <el-table-column label="操作" width="120" align="center">
                 <template slot-scope="scope">
                     <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                    <el-button @click="handleDelete(scope.row._id)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <!--分页效果-->
         <div class="bandBlock" style="float: right; margin: 10px 3px">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="form.currentPage" :page-sizes="pageSizes" :page-size="form.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                           :current-page="form.currentPage" :page-sizes="pageSizes" :page-size="form.pageSize"
+                           layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
 
         </div>
 
@@ -67,7 +70,8 @@
                 </el-form-item>
                 <el-form-item label="编织初始状态" :label-width="formLabelWidth">
                     <el-select v-model="newbandForm.initSwap" placeholder="请选择初始状态">
-                        <el-option v-for="item in initSwapOptions" :key="item.label" :label="item.label" :value="item.value"></el-option>
+                        <el-option v-for="item in initSwapOptions" :key="item.label" :label="item.label"
+                                   :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="縏带束数" :label-width="formLabelWidth">
@@ -86,6 +90,16 @@
         <from-string-dialog :showDialog="stringDialogVisible" @ensure="onFromString"></from-string-dialog>
         <from-clipboard-dialog :showDialog="clipboardDialogVisible" @ensure="onFromClipboard"></from-clipboard-dialog>
 
+        <el-dialog
+                title="提示"
+                :visible.sync="deleteDialogVisible"
+                width="30%">
+            <span>确定删除吗？</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="deleteDialogVisible=false">取 消</el-button>
+                <el-button type="primary" @click="handleDelete()">确 定</el-button>
+              </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -95,6 +109,7 @@
 
     import Band from '../../../utils/band/Band';
     import states from '../../../utils/band/states';
+
     export default {
         components: {
             fromStringDialog,
@@ -108,8 +123,8 @@
             this.getBandList();
         },
         data() {
-            let  pageSizes = [20, 40, 80, 200];
-                return {
+            let pageSizes = [20, 40, 80, 200];
+            return {
                 initSwapOptions: [
                     {value: states.swap.unswap, label: "先上下"},
                     {value: states.swap.swaped, label: "先刮搭"},
@@ -126,14 +141,17 @@
                 clipboardDialogVisible: false,
                 stringDialogVisible: false,
 
-                conference_area:[],
+                deleteDialogVisible: false,
+                bandIdToDelete: null,
+
+                conference_area: [],
                 pageSizes: pageSizes,
                 total: 0, //分页的数据Int类型
                 form: {
                     pageSize: pageSizes[0],
                     currentPage: 1,
                 },
-                tableData:[]
+                tableData: []
             }
         },
         methods: {
@@ -148,23 +166,23 @@
             },
 
             //根据条件筛选数据
-            getBandList(){
-                return this.$store.dispatch('band/getList',this.form).then(res=>{
+            getBandList() {
+                return this.$store.dispatch('band/getList', this.form).then(res => {
                     this.total = res.total;
                     if (res.code === 0) {
                         this.tableData = res.result
-                        this.total = res.total ? res.total:0;
+                        this.total = res.total ? res.total : 0;
                     } else {
                         this.tableData = [];
                         this.total = 1;
                     }
                 })
             },
-            onNewband(){
+            onNewband() {
                 this.newBandDialogVisible = false;
 
                 let {name, initSwap, bunch, length} = this.newbandForm;
-                if(bunch && length){
+                if (bunch && length) {
                     bunch = Number(bunch);
                     length = Number(length);
                     initSwap = Boolean(initSwap);
@@ -176,36 +194,53 @@
                     });
                 }
             },
-            onFromClipboard(band){
+            onFromClipboard(band) {
                 this.clipboardDialogVisible = false;
-                if(!band || !band instanceof Band) return;
+                if (!band || !band instanceof Band) return;
                 this.$store.dispatch('band/saveBandEditorPage', {band})
                 this.$router.push({
                     path: '/band/bandEditor',
                 });
             },
-            onFromString(band){
+            onFromString(band) {
                 this.stringDialogVisible = false;
-                if(!band || !band instanceof Band) return;
+                if (!band || !band instanceof Band) return;
                 this.$store.dispatch('band/saveBandEditorPage', {band})
                 this.$router.push({
                     path: '/band/bandEditor',
                 });
             },
 
-            handleEdit(band){
-                if(!band || !band instanceof Band) return;
+            handleEdit(band) {
+                if (!band || !band instanceof Band) return;
                 this.$store.dispatch('band/saveBandEditorPage', {band})
                 this.$router.push({
                     path: '/band/bandEditor',
                 });
+            },
+
+            handleDelete(_id) {
+                if(this.deleteDialogVisible){
+                    this.deleteDialogVisible = false;
+                    _id = this.bandIdToDelete;
+                    this.bandIdToDelete = null;
+                    return this.$store.dispatch('band/deleteById', {_id})
+                        .then(res => {
+                            if(res.code === 0){
+                                return this.getBandList();
+                            }
+                        })
+                }else{
+                    this.deleteDialogVisible = true;
+                    this.bandIdToDelete = _id;
+                }
             }
         }
     };
 </script>
 
 <style>
-    .bandBlock .el-input__inner{
+    .bandBlock .el-input__inner {
         height: 30px !important;
     }
 
