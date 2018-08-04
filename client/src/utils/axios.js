@@ -3,7 +3,7 @@ import config from "../../config/basic.config"
 import * as qs from "querystring";
 
 
-axios.defaults.timeout = 10000
+axios.defaults.timeout = 30000
 axios.defaults.withCredentials = true
 axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded;charset=UTF-8";
 axios.defaults.baseURL = config.apiDns //api默认路由地址
