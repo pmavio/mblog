@@ -22,7 +22,13 @@
                 </template>
             </el-table-column>
 
-            <el-table-column label="縏带名称" width="180" align="center">
+            <el-table-column label="缩略图" width="400" align="center">
+                <template slot-scope="scope">
+                    <img :src="scope.row.bitmapBase64"/>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="縏带名称" width="400" align="center">
                 <template slot-scope="scope">
                     <span>{{ scope.row.name }}</span>
                 </template>
@@ -34,7 +40,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column label="縏带长度" width="180" align="center">
+            <el-table-column label="縏带摆数" width="180" align="center">
                 <template slot-scope="scope">
                     <span>{{ scope.row.length }}</span>
                 </template>
@@ -77,7 +83,7 @@
                 <el-form-item label="縏带束数" :label-width="formLabelWidth">
                     <el-input v-model="newbandForm.bunch" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="縏带初始长度" :label-width="formLabelWidth">
+                <el-form-item label="縏带初始摆数" :label-width="formLabelWidth">
                     <el-input v-model="newbandForm.length" auto-complete="off"></el-input>
                 </el-form-item>
             </el-form>

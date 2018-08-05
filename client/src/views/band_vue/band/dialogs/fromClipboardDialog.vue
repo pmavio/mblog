@@ -12,7 +12,7 @@
             <el-form-item label="縏带束数" :label-width="formLabelWidth">
                 <el-input-number v-model="form.bunch" :step="2" :min="3" :max="99"></el-input-number>
             </el-form-item>
-            <el-form-item label="縏带长度" :label-width="formLabelWidth">
+            <el-form-item label="縏带摆数" :label-width="formLabelWidth">
                 <el-input-number v-model="form.length" :step="1" :min="1" :max="1000"></el-input-number>
             </el-form-item>
             <el-form-item label="预览图像" :label-width="formLabelWidth">

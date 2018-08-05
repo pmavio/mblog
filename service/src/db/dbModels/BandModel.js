@@ -15,20 +15,20 @@ export default class BandModel extends BaseDbModel{
             tags: Object,   //标签
 
             bunch: Number,  //束数
-            length: Number, //长度
+            length: Number, //长度,摆数
 
             _initSwap: Boolean,    //初始状态，false为先上下，true为先刮搭
 
             lines: Object,   //
             blockMap: Object, //
-
-            lineSeparator: String,  //文字编织程序的行分隔符
-            sideSeparator: String,  //文字编织程序的面分隔符
+            encryptedStr: String,   //压缩的内容
+            bitmapBase64: String,   //图片内容
+            bitData: Object,   //图片内容
         }
     }
 
 
-    getList(conditions) {
-        return this.dbModel.find(conditions, {name: 1, tags: 1, bunch: 1, length:1, _initSwap: 1, lineSeparator:1, sideSeparator:1});
+    getList(conditions, rows = {name: 1, tags: 1, bunch: 1, length:1, _initSwap: 1, bitmapBase64: 1}) {
+        return this.dbModel.find(conditions, rows);
     }
 }

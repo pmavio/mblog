@@ -71,8 +71,8 @@ export default class BaseDbModel{
         return this.dbModel.count(conditions);
     }
 
-    getById(_id) {
-        return this.dbModel.findOne({ _id });
+    getById(_id, rows) {
+        return this.dbModel.findOne({ _id }, rows);
     }
 
     insert(data) {

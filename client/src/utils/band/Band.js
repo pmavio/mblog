@@ -2,6 +2,7 @@ import Line from './Line';
 import Chain from './Chain';
 import Block from './Block';
 import states from './states';
+import Bitmap from '../Bitmap';
 
 //背面 正面
 //交换状态 unswap(上下) swaped(搭刮)
@@ -19,10 +20,26 @@ export default class Band{
     static fromBand(bandJson){
         let band = new Band(bandJson.bunch, bandJson.length, bandJson.initSwap);
         Object.assign(band, bandJson);
-        band.lines = bandJson.lines.map(line => {
-            return Line.fromLine(line);
-        });
-        band.init(false);
+
+        if(band.bitData){
+            band.blockMap = band.bitData.map(line => {
+                return line.map(block => new Block(block));
+            });
+
+            let swap = band._initSwap;
+            band.lines = band.blockMap.map(lineBlocks => {
+                let line = Line.fromBlocks(lineBlocks, swap);
+                swap = !swap;
+                return line;
+            });
+        }else if(band.lines){
+            band.lines = bandJson.lines.map(line => {
+                return Line.fromLine(line);
+            });
+            band.init(false);
+        }
+
+
         return band;
     }
 
@@ -109,6 +126,37 @@ export default class Band{
         for(let line of this.lines){
             line.updateSwapState(swap);
             swap = !swap;
+        }
+    }
+
+    getSaveData(){
+        let {_id, name, bunch, length, _initSwap, blockMap} = this;
+
+        let bitData = [];
+        let bitmap = new Bitmap();
+        bitmap.create(length, bunch, 0xFFFFFF);
+        for(let x=0;x<blockMap.length;x++){
+            let line = blockMap[x];
+            let bitLine = [];
+            for(let y=0;y<line.length;y++){
+                let block = line[y];
+                if(block.visible===true)bitmap.setPixel(x,y, 0x000000);
+                bitLine.push(block.visible?1:0);
+            }
+            bitData.push(bitLine);
+        }
+        let bitmapBase64 = bitmap.toBase64();
+
+
+
+        return {
+            _id,
+            name,
+            bunch,
+            length,
+            _initSwap,
+            bitmapBase64,
+            bitData,
         }
     }
 }

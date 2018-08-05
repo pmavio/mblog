@@ -2,6 +2,10 @@
     <div class="bandFlex bandEditor">
         <el-input v-if="band" v-model="band.name" placeholder="请输入图案名称"/>
 
+        <el-row>
+            图案显示大小：<el-input-number v-model="blockSize" :min="5" :max="100" label="方格尺寸"></el-input-number>
+            <el-checkbox class="ml20" v-model="showBorder">显示边框</el-checkbox>
+        </el-row>
         <el-card class="bandFlex bandArea">
             <!--TODO index-->
 
@@ -11,14 +15,16 @@
                         class="bandFlex bandLine">
                     <el-tooltip effect="dark" placement="bottom">
                         <div class="lineTipText" slot="content">{{programStringArray[li]}}</div>
-                        <button class="bandBlock">{{li+1}}</button>
+                        <div :style="{'width': blockSize+'px', 'height': blockSize+'px'}">{{li+1}}</div>
                     </el-tooltip>
                     <div v-for="(block, bi) in line"
                          :key="bi"
                          @click="onClickBlock(block, bi, li)"
                          @mouseenter="onMouseEnter(block, bi, li)"
-                        class="bandFlex bandBlock bandBlockBorder"
+                         class="bandFlex"
+                         :style="{'width': blockSize+'px', 'height': blockSize+'px'}"
                          :class="{
+                            bandBlockBorder: showBorder,
                             bandBlockVisible: block.visible,
                             bandBlockFaceColor: !block.visible&&bi%2===0,
                             bandBlockBackColor: !block.visible&&bi%2===1,
@@ -27,7 +33,7 @@
                     </div>
                     <el-tooltip effect="dark" placement="top">
                         <div class="lineTipText" slot="content">{{programStringArray[li]}}</div>
-                        <button class="bandBlock">{{li+1}}</button>
+                        <div :style="{'width': blockSize+'px', 'height': blockSize+'px'}">{{li+1}}</div>
                     </el-tooltip>
                 </div>
 
@@ -56,38 +62,6 @@
             <el-button @click="back()">返回</el-button>
         </el-row>
 
-        <el-dialog title="从文字程序导入縏带" :visible.sync="importFromProgrameStringDialogVisible">
-            <el-form :model="importFromProgrameStringForm">
-                <el-form-item label="縏带图案名称" :label-width="formLabelWidth">
-                    <el-input v-model="importFromProgrameStringForm.name" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="编织初始状态" :label-width="formLabelWidth">
-                    <el-select v-model="importFromProgrameStringForm.initSwap" placeholder="请选择初始状态">
-                        <el-option v-for="item in initSwapOptions" :key="item.label" :label="item.label" :value="item.value"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="縏带束数" :label-width="formLabelWidth">
-                    <el-input v-model="importFromProgrameStringForm.width" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="行分隔符" :label-width="formLabelWidth">
-                    <el-input v-model="importFromProgrameStringForm.lineSeparator" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="面分隔符" :label-width="formLabelWidth">
-                    <el-input v-model="importFromProgrameStringForm.sideSeparator" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="文字程序" :label-width="formLabelWidth">
-                    <el-input
-                            v-model="importFromProgrameStringForm.programeString"
-                            type="textarea"
-                            :rows="10"
-                            auto-complete="off"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="importFromProgrameStringDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="importFromProgrameString">确 定</el-button>
-            </div>
-        </el-dialog>
     </div>
 </template>
 
@@ -99,6 +73,8 @@
     import Block from '../../../utils/band/Block';
     import states from '../../../utils/band/states';
     import Program from '../../../utils/band/program/Program';
+
+    import Bitmap from '../../../utils/Bitmap';
 
     export default {
 
@@ -119,38 +95,25 @@
                   {value: states.swap.swaped, label: '先刮搭'},
               ],
 
-              band: null,
+              band: {
+                  name: '',
+                  bunch: 17,
+                  length: 64,
+                  initSwap: states.swap.unswap,
+              },
+
               blockMap: [],
               program: [],
               programStringArray: [],
               programString: '',
 
+              blockSize: 25,
+              showBorder: true,
               formLabelWidth: '120px',
 
-              importFromProgrameStringDialogVisible: false,
-              importFromProgrameStringForm:{
-                  name: '',
-                  initSwap: states.swap.unswap,
-                  bunch: 17,
-                  lineSeparator: '\\n',
-                  sideSeparator: '//',
-                  programeString: '',
-              },
-
-              clipboardDialogVisible: false,
           };
         },
         methods: {
-            importFromProgrameString(){
-                this.importFromProgrameStringDialogVisible = false;
-
-                let form = this.importFromProgrameStringForm;
-                this.band = bandUtils.fromProgrameString(form.name, form.initSwap, form.bunch, form.programeString, form.lineSeparator, form.sideSeparator);
-            },
-
-            generateCanvas(){
-//                this.band.initband();
-            },
 
             onClickBlock(block, bi, li){
                 block.visible = !block.visible;
@@ -227,10 +190,10 @@
                 let promise = null;
                 if(this.band._id){
                     promise = this.$store.dispatch('band/updateById', {
-                        data: this.band
+                        data: this.band.getSaveData()
                     });
                 }else{
-                    promise = this.$store.dispatch('band/insert', this.band);
+                    promise = this.$store.dispatch('band/insert', this.band.getSaveData());
                 }
                 promise.then(res => {
                         if(res.code === 0){
@@ -281,7 +244,6 @@
                 return;
             }
 
-            console.log('get local band =', band);
             if(band._id) {
                 this.$store.dispatch('band/getById', {_id: band._id})
                     .then(res => {
@@ -349,7 +311,7 @@
         background-color: #e1f5fe;
     }
     .bandBlockCenterColor{
-        background-color: #b3e5fc   ;
+        background-color: #b3e5fc;
     }
     .bandBlockVisible{
         background-color: #000000;

@@ -33,6 +33,28 @@ export default class Line{
         return line;
     }
 
+    static fromBlocks(blocks, swap){
+        if(!blocks) throw new Error('传入blocks为空');
+        else if(!Array.isArray(blocks)) throw new Error('传入blocks不是数组');
+        else if(blocks.length<3) throw new Error('传入blocks长度不能小于3');
+        else if(swap === undefined || swap === undefined) throw new Error('传入swap为空');
+
+        let bunch = blocks.length;
+        let line = new Line(bunch, swap);
+
+        line.blocks = blocks;
+        let faceChainBlocks = [];
+        let backChainBlocks = [];
+        for(let i=0; i<blocks.length; i++){
+            let chainBlocks = i%2===0?faceChainBlocks:backChainBlocks;
+            chainBlocks.push(blocks[i]);
+        }
+        line.faceChain = Chain.fromBlocks(states.side.face, faceChainBlocks);
+        line.backChain = Chain.fromBlocks(states.side.back, backChainBlocks);
+
+        return line;
+    }
+
     constructor(bunch, swap=states.swap.unswap){
         if(!bunch) throw new Error('bunch值不能为空');
         else if(bunch < 3) throw new Error('bunch值不能小于3');
