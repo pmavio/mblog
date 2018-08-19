@@ -3,6 +3,7 @@
             id="fromClipboardDialogBody"
             title='从图片导入'
             :visible.sync="visible"
+            @close="$emit('close')"
             width="780px"
             class="baseAlert">
         <el-form :model="form">

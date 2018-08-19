@@ -11,7 +11,9 @@
             <el-form-item class="ant-condition-button">
                 <el-button type="primary" class="w150" @click="clipboardDialogVisible=true">从图片导入</el-button>
             </el-form-item>
-
+            <el-form-item class="ant-condition-button">
+                <el-button type="primary" class="w150" @click="loginOrLogout()">{{isUserLogin?'登出':'登录'}}</el-button>
+            </el-form-item>
         </el-form>
 
         <!--表格部分-->
@@ -93,8 +95,16 @@
             </div>
         </el-dialog>
 
-        <from-string-dialog :showDialog="stringDialogVisible" @ensure="onFromString"></from-string-dialog>
-        <from-clipboard-dialog :showDialog="clipboardDialogVisible" @ensure="onFromClipboard"></from-clipboard-dialog>
+        <from-string-dialog
+                :showDialog="stringDialogVisible"
+                @ensure="onFromString"
+                @close="stringDialogVisible=false"
+        ></from-string-dialog>
+        <from-clipboard-dialog
+                :showDialog="clipboardDialogVisible"
+                @ensure="onFromClipboard"
+                @close="clipboardDialogVisible=false"
+        ></from-clipboard-dialog>
 
         <el-dialog
                 title="提示"
@@ -128,9 +138,21 @@
         mounted: function () {
             this.getBandList();
         },
+
+        computed: {
+            user(){
+                return this.$store.state.user.user || {};
+            },
+            isUserLogin(){
+                return this.$store.state.user.user !== null;
+            },
+        },
+
         data() {
             let pageSizes = [20, 40, 80, 200];
+            console.log('user =', this.$store.state.user.user);
             return {
+
                 initSwapOptions: [
                     {value: states.swap.unswap, label: "先上下"},
                     {value: states.swap.swaped, label: "先刮搭"},
@@ -161,6 +183,19 @@
             }
         },
         methods: {
+            loginOrLogout(){
+                if(this.isUserLogin){
+                    this.$confirm('确认退出登录？')
+                        .then(_ => {
+                            this.$store.dispatch('user/logout');
+                            this.$message('登出成功');
+                        })
+                        .catch(_ => {});
+                }else{
+                    this.$store.dispatch('user/shouldLogin');
+                }
+            },
+
             handleSizeChange(val) {
                 this.form.pageSize = val;
                 this.getBandList()
@@ -195,34 +230,36 @@
                     let band = new Band(bunch, length, initSwap);
                     band.name = name;
                     this.$store.dispatch('band/saveBandEditorPage', {band})
-                    this.$router.push({
-                        path: '/band/bandEditor',
-                    });
+                    this.gotoBandEditor();
                 }
             },
             onFromClipboard(band) {
                 this.clipboardDialogVisible = false;
                 if (!band || !band instanceof Band) return;
                 this.$store.dispatch('band/saveBandEditorPage', {band})
-                this.$router.push({
-                    path: '/band/bandEditor',
-                });
+                this.gotoBandEditor();
             },
             onFromString(band) {
                 this.stringDialogVisible = false;
                 if (!band || !band instanceof Band) return;
                 this.$store.dispatch('band/saveBandEditorPage', {band})
-                this.$router.push({
-                    path: '/band/bandEditor',
-                });
+                this.gotoBandEditor();
             },
 
             handleEdit(band) {
                 if (!band || !band instanceof Band) return;
-                this.$store.dispatch('band/saveBandEditorPage', {band})
-                this.$router.push({
-                    path: '/band/bandEditor',
-                });
+                this.$store.dispatch('band/saveBandEditorPage', {band});
+                this.gotoBandEditor();
+            },
+
+            gotoBandEditor(){
+                this.$store.dispatch('user/checkUserLogin', true)
+                    .then(res => {
+                        if(!res) return;
+                        this.$router.push({
+                            path: '/band/bandEditor',
+                        });
+                    });
             },
 
             handleDelete(_id) {
@@ -240,7 +277,7 @@
                     this.deleteDialogVisible = true;
                     this.bandIdToDelete = _id;
                 }
-            }
+            },
         }
     };
 </script>

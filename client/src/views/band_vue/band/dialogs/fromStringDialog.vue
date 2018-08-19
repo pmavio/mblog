@@ -2,6 +2,7 @@
     <el-dialog
             title='从文字程序导入'
             :visible.sync="visible"
+            @close="$emit('close')"
             width="780px"
             class="baseAlert">
         <el-form :model="form">

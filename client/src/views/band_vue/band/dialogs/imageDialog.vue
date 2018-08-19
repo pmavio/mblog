@@ -2,6 +2,7 @@
     <el-dialog
             :title="title"
             :visible.sync="visible"
+            @close="$emit('close')"
             class="baseAlert">
         <img v-if="!loading" :src="imgSrc"/>
         <h2 v-else>图片正在生成</h2>

@@ -1,11 +1,13 @@
 import LogModel from './LogModel';
 import MenuModel from './MenuModel';
-import BandaiModel from './BandModel';
+import BandModel from './BandModel';
+import UserModel from './UserModel';
 
 const modelTypes = [
     LogModel,
     MenuModel,
-    BandaiModel,
+    BandModel,
+    UserModel,
 ];
 
 //tableName-modelType对应

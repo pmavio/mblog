@@ -4,7 +4,7 @@
 
 import KoaRouter from 'koa-router';
 import Response from "../Response";
-import band from '../dao/band';
+import band from '../dao/bandDao';
 
 const router = new KoaRouter();
 router.prefix = 'band';

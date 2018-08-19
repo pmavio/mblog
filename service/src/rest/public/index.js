@@ -2,11 +2,13 @@ import koaRouter from 'koa-router';
 
 //ModelTypes
 import log from './Log';
+import user from './User';
 
 const moduleName = 'public';
 const router = koaRouter();
 const routerTypes = [
     log,
+    user,
     //继续添加routerType
 ];
 

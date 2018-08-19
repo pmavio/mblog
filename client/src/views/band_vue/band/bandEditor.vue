@@ -161,6 +161,10 @@
             },
 
             onBlockChanged(block, bi, li) {
+                if(!this.band instanceof Band) {
+                    console.error(this.band, 'is not instance of Band');
+                    return;
+                }
                 this.program = this.band.generateProgram();
                 this.programString = Program.toProgramString(this.program, this.band.initSwap);
                 this.programStringArray = this.programString.split('\n');

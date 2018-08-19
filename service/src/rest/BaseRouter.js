@@ -81,10 +81,10 @@ export default class BaseRouter extends koaRouter {
             const skipNum = pageSize * (currentPage - 1);
 
             const conditions = this.getDefaultConditions(query);
-
+            const rows = this.getDefaultListRows(query);
             const sortOrder = this.getDefaultSortOrder(query);
 
-            const promise = dbModel.getList(conditions);
+            const promise = dbModel.getList(conditions, rows);
             if (skipNum) promise.skip(skipNum);
             if (pageSize) promise.limit(pageSize);
             if (sortOrder) promise.sort(sortOrder);
@@ -220,6 +220,10 @@ export default class BaseRouter extends koaRouter {
         }
         delete c.Timestamp;
         return c;
+    }
+
+    getDefaultListRows(query){
+        return null;
     }
 
     /**

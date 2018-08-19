@@ -63,8 +63,8 @@ export default class BaseDbModel{
     }
 
     //全真七子
-    getList(conditions) {
-        return this.dbModel.find(conditions);
+    getList(conditions, rows) {
+        return this.dbModel.find(conditions, rows);
     }
 
     getCount(conditions) {

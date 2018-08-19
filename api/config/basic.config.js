@@ -6,6 +6,8 @@ const service_port = globalConfigs.getPort('service');
 const app_port = globalConfigs.getPort('api');
 const config = {
 
+    jwtSecret: 'Battlecruiser operational',
+
     //服务状态，有可能会出现服务器维护中
     systemState: {
         inService: true,
