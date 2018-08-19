@@ -16,6 +16,18 @@
             </el-form-item>
         </el-form>
 
+        <el-form ref="formFilters" :inline="true" :model="form" label-width="80px">
+            <el-form-item >
+                <el-input v-model="form.name" placeholder="搜索名称"></el-input>
+            </el-form-item>
+            <el-form-item >
+                <el-input v-model.number="form.bunch" placeholder="搜索束数"></el-input>
+            </el-form-item>
+            <el-form-item >
+                <el-button type="primary" class="w150" @click="search()">搜索</el-button>
+            </el-form-item>
+        </el-form>
+
         <!--表格部分-->
         <el-table :data="tableData" :fit='true' style="width: 100%" class="listTable">
             <el-table-column label="序号" width="70" align="center">
@@ -172,12 +184,14 @@
                 deleteDialogVisible: false,
                 bandIdToDelete: null,
 
-                conference_area: [],
                 pageSizes: pageSizes,
                 total: 0, //分页的数据Int类型
                 form: {
                     pageSize: pageSizes[0],
                     currentPage: 1,
+
+                    name: null,
+                    bunch: null,
                 },
                 tableData: []
             }
@@ -204,6 +218,11 @@
             handleCurrentChange(val) {
                 this.form.currentPage = val; //当前页
                 this.getBandList()
+            },
+
+            search(){
+                this.form.currentPage = 1;
+                return this.getBandList();
             },
 
             //根据条件筛选数据
