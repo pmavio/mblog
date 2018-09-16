@@ -22,7 +22,7 @@
                         <div
                                 class="bandLineController"
                                 :style="{'width': blockSize+'px', 'height': blockSize+'px'}"
-                                @click="focusLineIndex===li?focusLineIndex=-1:focusLineIndex=li">
+                                @click="onClickLine(li)">
                         {{li + 1}}
                         </div>
                     </el-tooltip>
@@ -50,7 +50,7 @@
                         <div
                                 class="bandLineController"
                                 :style="{'width': blockSize+'px', 'height': blockSize+'px'}"
-                                @click="focusLineIndex===li?focusLineIndex=-1:focusLineIndex=li">
+                                @click="onClickLine(li)">
                             {{li + 1}}
                         </div>
                     </el-tooltip>
@@ -151,6 +151,8 @@
                 showImage: false,
                 blockMapBase64: '',
                 blockMapBase64Loading: false,
+
+                lastReadLine: null,
             };
         },
         methods: {
@@ -172,6 +174,32 @@
 
             oninitSwapChange() {
                 this.onBlockChanged();
+            },
+
+            onClickLine(li) {
+                if(this.focusLineIndex === li) {
+                    if(window.speechSynthesis.paused) {
+                        window.speechSynthesis.resume();
+                        return;
+                    }else if(window.speechSynthesis.speaking) {
+                        window.speechSynthesis.pause();
+                        return;
+                    }
+                }
+                this.focusLineIndex = this.focusLineIndex === li ? -1 : li;
+                let lineToRead = this.programStringArray[li];
+                try {
+                    lineToRead = lineToRead.replace('〔', '第');
+                    lineToRead = lineToRead.replace('〕', '航。');
+                    lineToRead = lineToRead.replace('◆', '。');
+                }catch(e){
+                    console.error(e);
+                }
+                window.speechSynthesis.cancel();
+
+                this.lastReadLine = new window.SpeechSynthesisUtterance(lineToRead);
+                this.lastReadLine.rate = 0.5;
+                window.speechSynthesis.speak(this.lastReadLine);
             },
 
             reset() {

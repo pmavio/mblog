@@ -325,7 +325,7 @@ export default class Program{
         if(leftSteps.length===0){
             //没有剩余操作了，根据strArr处理分隔，拼字符串并返回
             return strArr.reduceRight((r,sw,i)=> {
-                if(r.weights + sw.weight > 3 && r.strs.length > 1){
+                if(r.weights + sw.weight > 2 && r.strs.length > 1){
                     r.weights = 0;
                     r.strs = '，' + r.strs;
                 }
@@ -380,7 +380,7 @@ export default class Program{
             }else{
                 let step = leftSteps.shift();
                 str = step.getString(swap);
-                strArr.push(strWeight(str, 1));
+                strArr.push(strWeight(str, str.length*0.25));
             }
         }
 
@@ -391,7 +391,6 @@ export default class Program{
         if(!program) return '';
         let str = '';
         let swap = initSwap;
-        console.log(program)
         for(let i=0; i<program.length; i++){
             let {face, back} = program[i];
 
