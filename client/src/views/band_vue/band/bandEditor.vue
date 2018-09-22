@@ -27,6 +27,15 @@
                         :max="1.5">
                 </el-slider>
             </div>
+            <div class="w150">选择朗读人：</div>
+            <el-select v-model="speaker" placeholder="请选择">
+                <el-option
+                        v-for="item in speakers"
+                        :key="item.voiceURI"
+                        :label="item.name"
+                        :value="item">
+                </el-option>
+            </el-select>
         </div>
 
         <div class="bandFlex divLine mt10">
@@ -176,6 +185,8 @@
                 blockMapBase64Loading: false,
 
                 speakRate: 0.7,
+                speaker: null,
+                speakers: [],
             };
         },
         methods: {
@@ -222,6 +233,7 @@
 
                 let lastReadLine = new window.SpeechSynthesisUtterance(lineToRead);
                 lastReadLine.rate = this.speakRate;
+                if(this.speaker) lastReadLine.voice = this.speaker;
                 window.speechSynthesis.speak(lastReadLine);
             },
 
@@ -378,11 +390,22 @@
                 return html2canvas(shareContent, opts)
             },
 
+            initSpeakers() {
+                let task = setInterval(() => {
+                    let speakers = speechSynthesis.getVoices();
+                    if(speakers && speakers.length > 0){
+                        clearInterval(task);
+                        this.speakers = speakers.filter(s => s.localService && s.lang.indexOf('zh')>=0);
+                        this.speaker = this.speakers[0];
+                    }
+                }, 1000);
+            },
         },
 
         mounted() {
             document.body.onkeydown = this.onKeyDown;
             document.body.onkeyup = this.onKeyUp;
+            this.initSpeakers();
 
             let band = this.$store.state.band.bandEditor.band;
 
