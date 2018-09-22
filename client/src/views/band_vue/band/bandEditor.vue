@@ -1,16 +1,39 @@
 <template>
     <div class="bandFlex bandEditor">
-        <el-input v-if="band" v-model="band.name" placeholder="请输入图案名称"/>
+        <div class="bandFlex divLine mt10">
+            <div class="w150">图案名称：</div>
+            <div style="width: 500px">
+                <el-input class="w200" v-if="band" v-model="band.name" placeholder="请输入图案名称"/>
+            </div>
+        </div>
 
-        <el-row>
-            图案显示大小：
-            <el-input-number v-model="blockSize" :min="5" :max="100" label="方格尺寸"></el-input-number>
-            <el-checkbox class="ml20" v-model="showBorder">显示边框</el-checkbox>
-        </el-row>
-        <el-row>
+        <div class="bandFlex divLine mt10">
+            <div class="w150">图案显示大小：</div>
+            <div >
+                <el-input-number v-model="blockSize" :min="5" :max="100" label="方格尺寸"></el-input-number>
+            </div>
+            <div >
+                <el-checkbox class="ml20" v-model="showBorder">显示边框</el-checkbox>
+            </div>
+        </div>
+
+        <div class="bandFlex divLine mt10">
+            <div class="w150">阅读语速：</div>
+            <div class="w300">
+                <el-slider class="w200"
+                        v-model="speakRate"
+                        :step="0.05"
+                        :min="0.5"
+                        :max="1.5">
+                </el-slider>
+            </div>
+        </div>
+
+        <div class="bandFlex divLine mt10">
             <el-button @click="copyPicture()">展示成品图</el-button>
-        </el-row>
-        <el-card class="bandFlex bandArea">
+        </div>
+
+        <el-card class="bandFlex bandArea mt10">
             <!--TODO index-->
 
             <div id="divBlockMap" v-if="blockMap" class="bandFlex bandBlockArea">
@@ -152,7 +175,7 @@
                 blockMapBase64: '',
                 blockMapBase64Loading: false,
 
-                lastReadLine: null,
+                speakRate: 0.7,
             };
         },
         methods: {
@@ -190,16 +213,16 @@
                 let lineToRead = this.programStringArray[li];
                 try {
                     lineToRead = lineToRead.replace('〔', '第');
-                    lineToRead = lineToRead.replace('〕', '航。');
+                    lineToRead = lineToRead.replace('〕', '摆。');
                     lineToRead = lineToRead.replace('◆', '。');
                 }catch(e){
                     console.error(e);
                 }
                 window.speechSynthesis.cancel();
 
-                this.lastReadLine = new window.SpeechSynthesisUtterance(lineToRead);
-                this.lastReadLine.rate = 0.5;
-                window.speechSynthesis.speak(this.lastReadLine);
+                let lastReadLine = new window.SpeechSynthesisUtterance(lineToRead);
+                lastReadLine.rate = this.speakRate;
+                window.speechSynthesis.speak(lastReadLine);
             },
 
             reset() {
@@ -482,4 +505,9 @@
     /*.el-tooltip__popper[x-placement^=top] .popper__arrow {*/
         /*border-top-color: blue;*/
     /*}*/
+
+    .divLine {
+        flex-direction: row;
+        align-items: center;
+    }
 </style>
