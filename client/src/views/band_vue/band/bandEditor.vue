@@ -27,8 +27,17 @@
                         :max="1.5">
                 </el-slider>
             </div>
-            <div class="w150">选择朗读人：</div>
-            <el-select v-model="speaker" placeholder="请选择">
+            <div class="ml20">朗读人1：</div>
+            <el-select v-model="speaker1" placeholder="请选择">
+                <el-option
+                        v-for="item in speakers"
+                        :key="item.voiceURI"
+                        :label="item.name"
+                        :value="item">
+                </el-option>
+            </el-select>
+            <div class="ml20">朗读人2：</div>
+            <el-select v-model="speaker2" placeholder="请选择">
                 <el-option
                         v-for="item in speakers"
                         :key="item.voiceURI"
@@ -184,8 +193,11 @@
                 blockMapBase64: '',
                 blockMapBase64Loading: false,
 
+                readingParts: [],
+                readPause: false,
                 speakRate: 0.7,
-                speaker: null,
+                speaker1: null,
+                speaker2: null,
                 speakers: [],
             };
         },
@@ -212,29 +224,48 @@
 
             onClickLine(li) {
                 if(this.focusLineIndex === li) {
-                    if(window.speechSynthesis.paused) {
-                        window.speechSynthesis.resume();
+                    if(this.readPause) {
+                        this.readPause = false;
+                        this.readNextPart();
+                        this.$message('继续朗读');
                         return;
-                    }else if(window.speechSynthesis.speaking) {
-                        window.speechSynthesis.pause();
+                    }else if(this.readingParts.length > 0) {
+                        this.readPause = true;
+                        this.$message('暂停朗读');
                         return;
                     }
                 }
                 this.focusLineIndex = this.focusLineIndex === li ? -1 : li;
-                let lineToRead = this.programStringArray[li];
-                try {
-                    lineToRead = lineToRead.replace('〔', '第');
-                    lineToRead = lineToRead.replace('〕', '摆。');
-                    lineToRead = lineToRead.replace('◆', '。');
-                }catch(e){
-                    console.error(e);
-                }
+                let lineToRead = this.parseReadingLine(this.programStringArray[li]);
                 window.speechSynthesis.cancel();
 
-                let lastReadLine = new window.SpeechSynthesisUtterance(lineToRead);
-                lastReadLine.rate = this.speakRate;
-                if(this.speaker) lastReadLine.voice = this.speaker;
-                window.speechSynthesis.speak(lastReadLine);
+                this.readPause = false;
+                let onend = () => {
+                    if(this.readPause) return;
+                    this.readNextPart();
+                };
+                this.readingParts = lineToRead.split('。')
+                    .map(str => {
+                        let part = new window.SpeechSynthesisUtterance(str);
+                        part.rate = this.speakRate;
+                        part.voice = li%2===0?this.speaker1:this.speaker2;
+                        part.onend = onend;
+                        return part;
+                    });
+                this.readNextPart();
+            },
+
+            readNextPart() {
+                if(!this.speaker1 || !this.speaker2) {
+                    alert('未获得朗读人，有可能是操作系统未安装TTS引擎');
+                    return;
+                }
+                const nextReadingPart = this.readingParts.shift();
+                if(!nextReadingPart) {
+//                    console.log('未获得阅读文本，或阅读结束');
+                    return;
+                }
+                window.speechSynthesis.speak(nextReadingPart);
             },
 
             reset() {
@@ -396,9 +427,34 @@
                     if(speakers && speakers.length > 0){
                         clearInterval(task);
                         this.speakers = speakers.filter(s => s.localService && s.lang.indexOf('zh')>=0);
-                        this.speaker = this.speakers[0];
+                        this.speaker1 = this.speakers[0];
+                        this.speaker2 = this.speakers[0];
                     }
                 }, 1000);
+            },
+
+            parseReadingLine(lineToRead) {
+                try {
+                    lineToRead = lineToRead.replace('〔', '第');
+                    lineToRead = lineToRead.replace('〕', '摆。');
+                    lineToRead = lineToRead.split('◆')
+                        .map(sideLine => {
+                            return sideLine.split('，')
+                                .map(str => {
+                                    let temp = str.split('隔');
+                                    if(temp.length < 3) return str;
+                                    temp = temp.join('。隔');
+                                    return temp;
+                                })
+                                .join('。');
+                        })
+                        .join('。然后。');
+                    lineToRead = lineToRead.replace(/。。/g,'。');
+                    console.log({lineToRead})
+                }catch(e){
+                    console.error(e);
+                }
+                return lineToRead;
             },
         },
 
